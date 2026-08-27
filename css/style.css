@@ -1,3 +1,5 @@
+/* Global Styles */
+
 body {
     font-family: Arial, sans-serif;
     max-width: 1000px;
@@ -17,9 +19,8 @@ p {
     line-height: 1.6;
 }
 
-#chart {
-    margin-top: 30px;
-}
+
+/* Navigation */
 
 .lab-nav {
     display: flex;
@@ -43,12 +44,15 @@ p {
     color: white;
 }
 
-#chart {
+
+/* Practice Visualization */
+
+#practice-chart {
     margin-top: 30px;
     overflow-x: auto;
 }
 
-#chart svg {
+#practice-chart svg {
     display: block;
     margin: 0 auto;
 }
@@ -62,13 +66,111 @@ p {
     font-size: 13px;
 }
 
+
+/* Lab 2 Visualization */
+
+#chart {
+    width: 100%;
+    max-width: 1150px;
+    margin: 35px auto 25px;
+}
+
+#chart svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+
+/* Typography */
+
+.chart-title {
+    font-size: 26px;
+    font-weight: 700;
+}
+
+.chart-subtitle {
+    font-size: 13px;
+    fill: #666;
+}
+
+.axis-label {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.facet-title {
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.city-label {
+    font-size: 11px;
+    fill: #333;
+}
+
+.population-label {
+    font-size: 11px;
+    font-weight: 600;
+    fill: #222;
+}
+
+
+/* Facet Styling */
+
+.facet-background {
+    fill: #fafafa;
+    stroke: #dddddd;
+    stroke-width: 1;
+}
+
+
+/* Grid Styling */
+
+.grid-line {
+    stroke: #dddddd;
+    stroke-dasharray: 3 4;
+}
+
+
+/* Bar Styling */
+
+.bar {
+    opacity: 0.88;
+    transition: opacity 0.15s ease;
+}
+
+.bar:hover {
+    opacity: 1;
+    stroke: #222;
+    stroke-width: 2px;
+}
+
+
+/* Legend */
+
+.legend-title {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.legend-label {
+    font-size: 12px;
+}
+
+
+/* Shared Tooltip */
+
 .tooltip {
     position: absolute;
+    padding: 10px 13px;
     background: white;
-    border: 1px solid #aaa;
-    padding: 8px 10px;
-    border-radius: 4px;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    font-size: 13px;
+    line-height: 1.5;
     pointer-events: none;
     opacity: 0;
-    font-size: 14px;
+    z-index: 1000;
 }

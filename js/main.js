@@ -1,29 +1,35 @@
-console.log("Hello STATS 401!");
+const labNav = document.querySelector("#lab-nav");
 
-let course = "STATS 401";
-let students = 40;
+if (labNav) {
 
-console.log(course);
-console.log(students);
+    const isHomePage =
+        window.location.pathname.endsWith("/stats401-labs/") ||
+        window.location.pathname.endsWith("/stats401-labs/index.html");
 
-let data = [10, 20, 30, 40, 50];
+    const prefix = isHomePage ? "" : "..";
 
-console.log(data);
+    const labs = [
+        { name: "Home", url: `${prefix}/index.html` },
+        { name: "Lab 1", url: `${prefix}/lab1/index.html` },
+        { name: "Lab 2", url: `${prefix}/lab2/index.html` },
+        { name: "Lab 3", url: `${prefix}/lab3/index.html` },
+        { name: "Lab 4", url: `${prefix}/lab4/index.html` },
+        { name: "Lab 5", url: `${prefix}/lab5/index.html` },
+        { name: "Lab 6", url: `${prefix}/lab6/index.html` },
+        { name: "Lab 7", url: `${prefix}/lab7/index.html` },
+        { name: "Lab 8", url: `${prefix}/lab8/index.html` },
+        { name: "Lab 9", url: `${prefix}/lab9/index.html` },
+        { name: "Lab 10", url: `${prefix}/lab10/index.html` }
+    ];
 
-let student = {
-    name: "Alice",
-    score: 85
-};
+    labs.forEach(lab => {
 
-console.log(student.name);
-console.log(student.score);
+        const link = document.createElement("a");
 
-let studentsData = [
-    {name: "Alice", score: 85},
-    {name: "Bob", score: 72},
-    {name: "Carol", score: 91}
-];
+        link.href = lab.url;
+        link.textContent = lab.name;
 
-console.log(studentsData);
+        labNav.appendChild(link);
 
-console.log("D3 version:", d3.version);
+    });
+}

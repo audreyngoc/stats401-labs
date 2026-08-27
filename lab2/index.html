@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
@@ -13,38 +14,82 @@
 
 <body>
 
-<header>
-    <h1>STATS 401</h1>
-    <p>Data Acquisition and Visualization</p>
-</header>
+    <h1>STATS 401: Data Acquisition and Visualization</h1>
 
-<nav class="lab-nav">
-    <a href="../lab1/index.html">Lab 1</a>
-    <a href="../lab2/index.html">Lab 2</a>
-    <a href="../lab3/index.html">Lab 3</a>
-    <a href="../lab4/index.html">Lab 4</a>
-    <a href="../lab5/index.html">Lab 5</a>
-    <a href="../lab6/index.html">Lab 6</a>
-    <a href="../lab7/index.html">Lab 7</a>
-    <a href="../lab8/index.html">Lab 8</a>
-    <a href="../lab9/index.html">Lab 9</a>
-    <a href="../lab10/index.html">Lab 10</a>
-</nav>
+    <nav id="lab-nav" class="lab-nav"></nav>
 
-<main>
-    <h2>Lab 2: Multivariate Visualization with D3</h2>
+    <main>
 
-    <p>
-        This visualization explores the relationship among
-        study hours, exam score, major, and year level.
-    </p>
+        <h2>Lab 2: Multivariate Visualization with D3</h2>
 
-    <div id="chart"></div>
-    <div id="tooltip" class="tooltip"></div>
-</main>
+        <p>
+            This visualization explores how city population varies
+            across development levels and regions.
+        </p>
 
-<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
-<script src="lab2.js"></script>
+
+        <!-- Lab 2 Visualization -->
+
+        <div id="chart"></div>
+
+        <div id="tooltip" class="tooltip"></div>
+
+
+        <!-- Design Justification -->
+
+        <section id="design-justification">
+
+            <h2>Design Justification</h2>
+
+            <p>
+                The visualization is designed to examine how city population varies across development levels and whether this pattern differs by region. 
+                
+            <p> 
+                1. Because population is a ratio variable, the task is to compare population magnitude, so it is encoded by bar height, which makes differences in size easy to perceive. 
+            </p>
+            
+            <p>
+                2. Development level is an ordinal variable, so it is represented by three facets ordered from Low to Medium to High, preserving its natural order and supporting direct comparison across development levels. 
+            <p> 
+
+            <p> 
+                3. Region is a nominal variable, so it is encoded by color, allowing viewers to identify and compare regional patterns within each development level. 
+            </p>   
+            
+            <p>
+                4. Temperature is an interval variable and is included in the interactive tooltip so viewers can explore it without distracting from the primary population comparison. 
+            </p>
+            
+            <p> 
+                6. Each city is identified by its x-axis label, and cities within each development level are ordered from smallest to largest population to make differences in population especially clear. 
+            </p>
+            
+            <p>
+                The visualization is intended to help viewers notice that cities in higher development levels generally have larger populations, while the regional colors allow them to examine whether this relationship is consistent across North, South, East, and West.
+            </p>
+
+        </section>
+
+
+        <!-- Practice Task -->
+
+        <h2>Practice Task</h2>
+
+        <p>
+            This visualization explores the relationship among
+            study hours, exam score, major, and year level.
+        </p>
+
+        <div id="practice-chart"></div>
+
+    </main>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+    <script src="../js/main.js"></script>
+    <script src="practice.js"></script>
+    <script src="lab2.js"></script>
 
 </body>
+
 </html>
