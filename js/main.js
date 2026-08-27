@@ -78,6 +78,6 @@ if (!chart.empty()) {
             .attr("y", height - 50)
             .attr("text-anchor", "middle")
             .text(d => d.name);
-
+        
     });
 }
