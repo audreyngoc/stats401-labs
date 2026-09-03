@@ -2,21 +2,249 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>STATS 401 - Lab 3</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="../css/style.css">
+    <title>
+        Lab 3 - Web Data Acquisition
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <style>
+
+        #data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        #data-table th,
+        #data-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        #data-table th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+        }
+
+        #data-table th:hover {
+            background-color: #e5e5e5;
+        }
+
+        #data-table tr:nth-child(even) {
+            background-color: #fafafa;
+        }
+
+        .table-container {
+            overflow-x: auto;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .dataset-note {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #555;
+            background: #f7f7f7;
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-    <h1>STATS 401 - Lab 3</h1>
+    <h1>
+        STATS 401: Data Acquisition and Visualization
+    </h1>
 
-    <p>Lab 3 will be added here.</p>
 
-    <a href="../index.html">Back to Home</a>
+    <nav
+        id="lab-nav"
+        class="lab-nav"
+    ></nav>
+
+
+    <main>
+
+        <h2>
+            Lab 3: Web Data Acquisition
+        </h2>
+
+
+        <!-- Dataset Description -->
+
+        <section id="dataset-description">
+
+            <h2>
+                Dataset Description
+            </h2>
+
+            <p>
+                This dataset contains product records
+                collected from the Biti's Vietnam online
+                store. Each row represents one unique
+                product listed in the website's public
+                product catalog.
+            </p>
+
+            <p>
+                The dataset includes product images, product identifiers (product IDs),
+                product names, prices, brands/vendors,
+                categories, availability (whether the product is still sold), variants, and the product URL
+                from which each product was discovered.
+            </p>
+
+            <div class="dataset-note">
+
+                <strong>
+                    Acquisition method:
+                </strong>
+
+                REST API/JSON acquisition using Python's
+                <code>requests</code> library. The script
+                requests Biti's public
+                <code>products.json</code> endpoint,
+                parses the returned JSON data, and saves
+                the resulting records as a CSV file.
+
+            </div>
+
+        </section>
+
+
+        <!-- Data Source -->
+
+        <section id="data-source">
+
+            <h2>
+                Data Source
+            </h2>
+
+            <p>
+                Biti's Vietnam online store:
+                <a
+                    href="https://bitis.com.vn/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    https://bitis.com.vn/
+                </a>
+            </p>
+
+            <p>
+                The data is acquired from Biti's publicly
+                accessible product JSON endpoint. The
+                endpoint supports pagination, allowing the
+                Python script to request multiple pages
+                automatically.
+            </p>
+
+            <p>
+                The script checks Biti's
+                <a
+                    href="https://bitis.com.vn/robots.txt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    robots.txt
+                </a>
+                before making requests and uses a
+                one-second delay between repeated requests
+                to avoid excessive server load.
+            </p>
+
+        </section>
+
+
+        <!-- Number of Records -->
+
+        <section id="number-of-records">
+
+            <h2>
+                Number of Records
+            </h2>
+
+            <p>
+                The Python acquisition script is configured
+                to collect at least
+                <strong>1,000 unique product records</strong>.
+            </p>
+
+            <p>
+                Products appearing in multiple collections
+                are deduplicated using their product
+                identifier or product URL before the final
+                CSV file is saved.
+            </p>
+
+        </section>
+
+
+        <!-- Table -->
+
+        <section id="acquired-data">
+
+            <h2>
+                Acquired Data
+            </h2>
+
+            <p>
+                Click a column heading to sort the dataset.
+                Click the same heading again to reverse
+                the sorting order.
+            </p>
+
+
+            <div class="table-container">
+
+                <table id="data-table">
+
+                    <thead></thead>
+
+                    <tbody></tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- D3 -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/d3@7"
+    ></script>
+
+
+    <!-- Shared navigation if your project uses it -->
+
+    <script src="../js/main.js"></script>
+
+
+    <!-- Lab 3 -->
+
+    <script src="lab3.js"></script>
+
 
 </body>
 
