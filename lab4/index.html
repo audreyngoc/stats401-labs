@@ -2,21 +2,387 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>STATS 401 - Lab 4</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-    <link rel="stylesheet" href="../css/style.css">
+    <title>
+        Lab 4 - Cleaning Web Data for Visualization
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css"
+    >
+
+    <style>
+
+        .dataset-note {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #555;
+            background: #f7f7f7;
+        }
+
+        .method-note {
+            margin: 15px 0;
+            padding: 15px;
+            border-left: 4px solid #555;
+            background: #f7f7f7;
+        }
+
+        #visualization {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        #visualization svg {
+            display: block;
+            margin: 0 auto;
+        }
+
+        .tooltip {
+            position: absolute;
+            padding: 12px 15px;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            pointer-events: none;
+            opacity: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .visualization-note {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f7f7f7;
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
-    <h1>STATS 401 - Lab 2</h1>
+    <h1>
+        STATS 401: Data Acquisition and Visualization
+    </h1>
 
-    <p>Lab 4 will be added here.</p>
 
-    <a href="../index.html">Back to Home</a>
+    <nav
+        id="lab-nav"
+        class="lab-nav"
+    ></nav>
+
+
+    <main>
+
+        <h2>
+            Lab 4: Cleaning Web Data for Visualization
+        </h2>
+
+
+        <!-- Dataset Description -->
+
+        <section id="dataset-description">
+
+            <h2>
+                Dataset Description
+            </h2>
+
+            <p>
+                This project uses the
+                <strong>
+                    <a href="https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter?resource=download"
+                    target="_blank"
+                    rel="noopener noreferrer">
+                        Customer Support on Twitter
+                    </a>
+                </strong>
+                dataset. The dataset contains Twitter
+                conversations between customers and company
+                support accounts.
+            </p>
+            
+            <p>
+                Each record contains information including
+                a tweet ID, author ID, whether the tweet was
+                inbound, the creation time, tweet text, and
+                links connecting customer tweets with
+                company responses.
+            </p>
+
+            <div class="dataset-note">
+
+                <strong>
+                    Analysis dataset:
+                </strong>
+
+                The original dataset contains more than
+                2.8 million tweets. Customer tweets were
+                linked to company responses using
+                <code>response_tweet_id</code>. The
+                10 companies with the largest numbers of
+                linked customer tweets were selected, and
+                500 tweets were randomly sampled from each
+                company, producing
+                <strong>5,000 tweets</strong> for analysis.
+
+            </div>
+
+        </section>
+
+
+        <!-- Data Source -->
+
+        <section id="data-source">
+
+            <h2>
+                Data Source
+            </h2>
+
+            <p>
+                The dataset was obtained from Kaggle:
+                <strong>
+                    Customer Support on Twitter
+                </strong>.
+            </p>
+
+            <p>
+                The original dataset can be accessed through
+                the Kaggle dataset page: https://www.kaggle.com/datasets/thoughtvector/customer-support-on-twitter. Because the raw
+                dataset is large and has redistribution
+                restrictions, the original CSV is not
+                included in this GitHub repository.
+            </p>
+
+            <p>
+    To reproduce the analysis, follow these steps:
+            </p>
+
+            <ol>
+                <li>
+                    Download the dataset from Kaggle.
+                </li>
+
+                <li>
+                    Extract <code>twcs.csv</code>.
+                </li>
+
+                <li>
+                    Place the file in
+                    <code>data/raw/twcs.csv</code>.
+                </li>
+
+                <li>
+                    Run <code>lab4/clean_tweets.py</code> to clean
+                    the raw data and create the analysis dataset.
+                </li>
+
+                <li>
+                    Run <code>lab4/sentiment.py</code> to apply the
+                    RoBERTa sentiment model to every tweet.
+                </li>
+            </ol>
+
+            <p>
+                The dataset contains Twitter customer-support
+                conversations involving customers and company
+                support accounts. The resulting cleaned dataset
+                is used to create the sentiment visualization.
+            </p>
+
+        </section>
+
+
+        <!-- Data Cleaning -->
+
+        <section id="data-cleaning">
+
+            <h2>
+                Data Cleaning
+            </h2>
+
+            <p>
+                The raw dataset was inspected for missing
+                values, duplicate records, duplicate tweet
+                IDs, empty tweet text, invalid dates, and
+                incorrect data types.
+            </p>
+
+            <p>
+                Tweet IDs and response IDs were converted to
+                numeric types, timestamps were parsed using
+                the original Twitter date format, and tweet
+                text was cleaned by collapsing unnecessary
+                whitespace and removing leading and trailing
+                spaces.
+            </p>
+
+            <p>
+                Customer tweets were identified using the
+                <code>inbound</code> field. Customer tweets
+                were then matched to company responses through
+                the response tweet ID. Tweets that could not
+                be directly linked to a company were excluded
+                from the company-level analysis.
+            </p>
+
+        </section>
+
+
+        <!-- Sentiment Analysis -->
+
+        <section id="sentiment-analysis">
+
+            <h2>
+                Sentiment Analysis
+            </h2>
+
+            <p>
+                Sentiment was generated for every tweet in
+                the analysis dataset using the
+                <strong>
+                    CardiffNLP Twitter RoBERTa sentiment model
+                </strong>.
+            </p>
+
+            <p>
+                Before classification, user mentions were
+                replaced with <code>@user</code> and URLs
+                were replaced with <code>http</code> to
+                preserve the general structure of Twitter
+                language while reducing unnecessary
+                variation.
+            </p>
+
+            <p>
+                The model produces probabilities for
+                negative, neutral, and positive sentiment.
+                The sentiment label is the category with the
+                highest predicted probability.
+            </p>
+
+            <div class="method-note">
+
+                <strong>
+                    Sentiment score:
+                </strong>
+
+                The continuous sentiment score is calculated
+                as positive probability minus negative
+                probability. A higher score indicates more
+                positive predicted sentiment, while a lower
+                score indicates more negative predicted
+                sentiment.
+
+            </div>
+
+            <p>
+                These sentiment labels are model-generated
+                predictions rather than ground-truth labels.
+                They may be affected by sarcasm, irony, slang,
+                ambiguity, and domain-specific language.
+            </p>
+
+        </section>
+
+
+        <!-- Visualization -->
+
+        <section id="visualization-section">
+
+            <h2>
+                Customer Sentiment Across Companies
+            </h2>
+
+            <p>
+                The visualization compares sentiment distributions across companies using a 100% stacked horizontal bar chart.
+                The visualization compares the distribution
+                of customer sentiment across the 10 selected
+                companies using a 100% stacked horizontal bar chart. Each horizontal bar represents
+                100% of the sampled customer tweets for one
+                company.
+            </p>
+
+            <div class="visualization-note">
+
+                <strong>
+                    How to read the visualization:
+                </strong>
+
+                The length of each segment represents the
+                percentage of tweets classified as negative,
+                neutral, or positive. Companies are ordered
+                from highest to lowest average sentiment
+                score.
+
+            </div>
+
+            <div id="visualization"></div>
+
+            <div class="tooltip"></div>
+
+        </section>
+
+
+        <!-- Analysis -->
+
+        <section id="analysis">
+
+            <h2>
+                Analysis
+            </h2>
+
+            <p>
+                The visualization shows substantial differences in customer
+                sentiment across the 10 companies. Southwest Airlines has
+                the highest average sentiment score and the largest positive
+                share, with 41.6% of sampled customer tweets classified as
+                positive. It is also the only company where positive tweets
+                make up a larger share than negative tweets. In contrast,
+                Uber has the lowest average sentiment score, with 68.0% of
+                tweets classified as negative and only 3.0% as positive.
+                Apple and Comcast also show relatively high proportions of
+                negative sentiment. Across the 5,000 sampled customer tweets,
+                negative sentiment accounts for 53.2%, compared with 30.7%
+                neutral and 16.1% positive sentiment. Overall, negative
+                sentiment is the largest category for most companies, while
+                the average sentiment score provides a continuous measure
+                for comparing their relative sentiment. The differences
+                suggest that customer experiences expressed through support
+                conversations vary considerably across companies.
+            </p>
+
+        </section>
+
+
+    </main>
+
+
+    <!-- D3 -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/d3@7"
+    ></script>
+
+
+    <!-- Shared navigation -->
+
+    <script src="../js/main.js"></script>
+
+
+    <!-- Lab 4 -->
+
+    <script src="lab4.js"></script>
+
 
 </body>
 
