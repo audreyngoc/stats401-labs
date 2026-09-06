@@ -232,6 +232,35 @@ d3.csv("../data/lab4_clean_tweets.csv")
                 "font-size",
                 "13px"
             );
+        
+                chart.append("text")
+            .attr(
+                "transform",
+                "rotate(-90)"
+            )
+            .attr(
+                "x",
+                -chartHeight / 2
+            )
+            .attr(
+                "y",
+                -110
+            )
+            .attr(
+                "text-anchor",
+                "middle"
+            )
+            .style(
+                "font-size",
+                "14px"
+            )
+            .style(
+                "font-weight",
+                "bold"
+            )
+            .text(
+                "Company"
+            );
 
         series.forEach(layer => {
 
@@ -416,6 +445,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
             .text(
                 "Share of customer tweets"
             );
+
 
         svg.append("text")
             .attr(
