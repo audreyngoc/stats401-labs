@@ -2,7 +2,7 @@ const margin = {
     top: 130,
     right: 25,
     bottom: 70,
-    left: 130
+    left: 190
 };
 
 const container = document.querySelector("#visualization");
@@ -244,11 +244,11 @@ d3.csv("../data/lab4_clean_tweets.csv")
             )
             .attr(
                 "y",
-                -110
+                -165
             )
             .attr(
                 "text-anchor",
-                "middle"
+                "start"
             )
             .style(
                 "font-size",
@@ -424,7 +424,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
             )
             .attr(
                 "x",
-                chartWidth / 2
+                315
             )
             .attr(
                 "y",
@@ -432,7 +432,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
             )
             .attr(
                 "text-anchor",
-                "middle"
+                "start"
             )
             .style(
                 "font-size",
@@ -450,7 +450,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
         svg.append("text")
             .attr(
                 "x",
-                width / 2
+                20
             )
             .attr(
                 "y",
@@ -458,7 +458,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
             )
             .attr(
                 "text-anchor",
-                "middle"
+                "start"
             )
             .style(
                 "font-size",
@@ -475,7 +475,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
         svg.append("text")
             .attr(
                 "x",
-                width / 2
+                24
             )
             .attr(
                 "y",
@@ -483,7 +483,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
             )
             .attr(
                 "text-anchor",
-                "middle"
+                "start"
             )
             .style(
                 "font-size",
@@ -500,7 +500,7 @@ d3.csv("../data/lab4_clean_tweets.csv")
                 .attr(
                     "transform",
                     `translate(
-                        ${width / 2 - legendWidth / 2},
+                        25,
                         78
                     )`
                 );
