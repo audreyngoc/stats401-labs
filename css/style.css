@@ -174,3 +174,35 @@ p {
     opacity: 0;
     z-index: 1000;
 }
+
+/* Lab 5 Visualization */
+
+#visualization {
+    width: 100%;
+    max-width: 100%;
+    margin: 35px auto 25px;
+    overflow: hidden;
+}
+
+#visualization svg {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.visualization-note h3,
+#node-link-visualization h3,
+#adjacency-matrix h3 {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #1a0953 !important;
+    margin-top: 28px !important;
+    margin-bottom: 10px !important;
+}
+.design-subheading {
+    font-size: 18px !important;
+    font-weight: 600 !important;
+    color: #1a0953 !important;
+    margin-top: 28px !important;
+    margin-bottom: 10px !important;
+}
