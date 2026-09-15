@@ -206,3 +206,246 @@ p {
     margin-top: 28px !important;
     margin-bottom: 10px !important;
 }
+
+/* Lab 6 Visualization */
+/* Lab 6 treemap containers */
+
+#treemap-squarify,
+#treemap-binary {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 24px 0 34px;
+    padding: 12px 14px 14px;
+    border: 1px solid #d5d5d5;
+    border-radius: 7px;
+    background: #f0f6fe;
+    overflow: hidden;
+}
+
+#treemap-squarify svg,
+#treemap-binary svg {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+}
+
+
+/* Treemap legend */
+
+.treemap-legend {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin: 0 0 10px;
+    font-size: 12px;
+    color: #333333;
+}
+
+.treemap-legend-title {
+    font-weight: 700;
+    color: #222222;
+    margin-right: 2px;
+}
+
+.treemap-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.treemap-legend-box {
+    width: 13px;
+    height: 13px;
+    display: inline-block;
+    border: 1px solid #999999;
+    border-radius: 2px;
+    box-sizing: border-box;
+}
+
+.treemap-legend-label {
+    white-space: nowrap;
+}
+
+/* Treemap hierarchy backgrounds */
+
+.continent-bg {
+    fill: #f8f8f8;
+    pointer-events: none;
+}
+
+.area-bg {
+    fill: #fff7f7ff;
+    pointer-events: none;
+}
+
+
+/* Continent boundaries */
+
+.treemap-continent {
+    fill: none;
+    stroke: #333333;
+    stroke-width: 1.5px;
+    pointer-events: none;
+}
+
+
+/* Area boundaries */
+
+.treemap-area {
+    fill: none;
+    stroke: #aaaaaa;
+    stroke-width: 0.8px;
+    pointer-events: none;
+}
+
+
+/* Country cells */
+
+.country-rect {
+    stroke: #ffffff;
+    stroke-width: 0.8px;
+    shape-rendering: geometricPrecision;
+}
+
+/* Continent labels */
+
+.treemap-group-label {
+    font-family: Arial, sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    fill: #222222;
+    pointer-events: none;
+    letter-spacing: 0.2px;
+}
+
+
+/* Area labels */
+
+.treemap-area-label {
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    fill: #666666;
+    pointer-events: none;
+}
+
+
+/* Country labels */
+
+.treemap-label {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    pointer-events: none;
+    dominant-baseline: alphabetic;
+}
+
+.treemap-label-large {
+    font-size: 13px;
+    font-weight: 700;
+}
+
+
+/* Tooltip */
+
+#tooltip {
+    position: fixed;
+    max-width: 250px;
+    padding: 10px 12px;
+    background: #ffffff;
+    color: #222222;
+    border: 1px solid #cccccc;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14);
+    font-family: Arial, sans-serif;
+    font-size: 12px;
+    line-height: 1.55;
+    pointer-events: none;
+    opacity: 0;
+    z-index: 1000;
+}
+
+.tooltip-country {
+    margin-bottom: 4px;
+    font-weight: 700;
+    font-size: 13px;
+    color: #222222;
+}
+
+.tooltip-label {
+    font-weight: 600;
+    color: #555555;
+}
+
+
+/* Method descriptions */
+
+.visualization-note {
+    margin: 8px 0 18px;
+    padding: 12px 16px;
+    background: #fafafa;
+    border-left: 3px solid #1a0953;
+    color: #333333;
+    font-size: 13px;
+    line-height: 1.55;
+}
+
+
+/* Visualization section */
+
+#visualization-section h2 {
+    margin-top: 34px;
+    margin-bottom: 18px;
+}
+
+#visualization-section h3 {
+    margin-top: 26px;
+    margin-bottom: 8px;
+    color: #1a0953;
+}
+
+
+/* Loading error */
+
+.error-message {
+    padding: 12px;
+    margin-top: 10px;
+    border: 1px solid #d8b5b5;
+    background: #faf4f4;
+    color: #8a3030;
+    font-size: 13px;
+}
+
+
+/* Responsive treemaps */
+
+@media (max-width: 700px) {
+
+    #treemap-squarify,
+    #treemap-binary {
+        padding: 10px;
+        margin-bottom: 26px;
+    }
+
+    .treemap-legend {
+        gap: 10px;
+    }
+
+    .treemap-group-label {
+        font-size: 13px;
+    }
+
+    .treemap-area-label {
+        font-size: 10px;
+    }
+
+    .treemap-label {
+        font-size: 10px;
+    }
+
+    .treemap-label-large {
+        font-size: 12px;
+    }
+}

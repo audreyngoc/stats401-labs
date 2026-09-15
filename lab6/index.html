@@ -2,21 +2,254 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>STATS 401 - Lab 6</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../css/style.css">
+    <title>
+        STATS 401 — Lab 6
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css">
+
 </head>
 
 <body>
 
-    <h1>STATS 401 - Lab 6</h1>
+    <h1>
+        STATS 401: Data Acquisition and Visualization
+    </h1>
 
-    <p>Lab 6 will be added here.</p>
+    <nav
+        id="lab-nav"
+        class="lab-nav">
+    </nav>
 
-    <a href="../index.html">Back to Home</a>
+
+    <main>
+
+        <!-- Dataset Description -->
+
+        <section id="dataset-description">
+
+            <h2>
+                Lab 6: Hierarchical Data Visualization
+            </h2>
+
+            <p>
+                This visualization uses the provided GDP dataset
+                to show the hierarchical relationship between
+                continent, area, and country. GDP amount represents
+                the quantitative value used to determine rectangle
+                size, while GDP status indicates whether a country's
+                GDP increased, remained unchanged, or decreased.
+            </p>
+
+        </section>
+
+
+        <!-- Data Structure -->
+
+        <section id="data-source">
+
+            <h2>
+                Data Structure
+            </h2>
+
+            <div class="visualization-note">
+
+                <strong>
+                    Hierarchy:
+                </strong>
+
+                World → Continent → Area → Country
+
+                <br><br>
+
+                <strong>
+                    Quantitative attribute:
+                </strong>
+
+                GDP in billions of U.S. dollars
+
+                <br><br>
+
+                <strong>
+                    Categorical attribute:
+                </strong>
+
+                GDP status
+                (Increase, Unchanged, Decrease)
+
+            </div>
+
+        </section>
+
+
+        <!-- Visualization -->
+
+        <section id="visualization-section">
+
+            <h2>
+                Treemap Visualizations
+            </h2>
+
+
+            <h3 class="design-subheading">
+                GDP Status Legend
+            </h3>
+
+            <div class="treemap-legend">
+
+                <div class="treemap-legend-item">
+
+                    <span
+                        class="treemap-legend-box"
+                        style="background: #5cf45c;">
+                    </span>
+
+                    Increase
+
+                </div>
+
+
+                <div class="treemap-legend-item">
+
+                    <span
+                        class="treemap-legend-box"
+                        style="background: #d6cece;">
+                    </span>
+
+                    Unchanged
+
+                </div>
+
+
+                <div class="treemap-legend-item">
+
+                    <span
+                        class="treemap-legend-box"
+                        style="background: #ff5359;">
+                    </span>
+
+                    Decrease
+
+                </div>
+
+            </div>
+
+
+            <!-- Treemap 1 -->
+
+            <h3 class="design-subheading">
+                Treemap 1: Squarify
+            </h3>
+
+            <div class="visualization-note">
+
+                The Squarify tiling method attempts to create
+                rectangles with aspect ratios closer to squares,
+                making GDP differences and individual country
+                regions easier to compare and read.
+
+            </div>
+
+            <div id="treemap-squarify"></div>
+
+
+            <!-- Treemap 2 -->
+
+            <h3 class="design-subheading">
+                Treemap 2: Binary
+            </h3>
+
+            <div class="visualization-note">
+
+                The Binary tiling method recursively divides the
+                available space into two groups, creating a clear
+                partition of the hierarchy while producing a
+                different spatial arrangement from Squarify.
+
+            </div>
+
+            <div id="treemap-binary"></div>
+
+        </section>
+
+
+        <!-- Design Description -->
+
+        <section id="analysis">
+
+            <h2>
+                Design Description
+            </h2>
+
+            <p>
+                <strong>1. Visual channels.</strong>
+                Rectangle <strong>area</strong> was chosen to represent
+                GDP amount because it allows countries with larger GDPs
+                to occupy more space, making relative differences in
+                economic size easy to compare. <strong>Color</strong> was
+                chosen to represent GDP status because the three
+                categorical outcomes can be distinguished quickly:
+                green represents an increase, gray represents unchanged
+                GDP, and red represents a decrease. The nested rectangles
+                and labels represent the
+                <strong>Continent → Area → Country</strong> hierarchy,
+                showing how individual countries belong to larger
+                geographic groups.
+            </p>
+
+            <p>
+                <strong>2. Segmentation strategies.</strong>
+                The <strong>Squarify</strong> treemap creates more
+                compact, square-like rectangles, which improves
+                readability and makes country areas easier to compare.
+                In contrast, the <strong>Binary</strong> treemap
+                recursively divides the available space into two groups,
+                creating a clearer sense of hierarchical partitioning but
+                producing more elongated rectangles in some areas.
+                As a result, Squarify is more effective for comparing GDP
+                sizes and reading labels, while Binary emphasizes the
+                structure and organization of the hierarchy.
+            </p>
+
+        </section>
+
+    </main>
+
+
+    <div
+        id="tooltip"
+        class="tooltip">
+    </div>
+
+
+    <!-- D3 -->
+
+    <script
+        src="https://d3js.org/d3.v7.min.js">
+    </script>
+
+
+    <!-- Shared navigation -->
+
+    <script
+        src="../js/main.js">
+    </script>
+
+
+    <!-- Lab 6 JavaScript -->
+
+    <script
+        src="lab6.js">
+    </script>
 
 </body>
 
