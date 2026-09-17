@@ -1,7 +1,4 @@
 /* Global Styles */
-body {
-    background: red !important;
-}
 
 body {
     font-family: Arial, sans-serif;
@@ -455,201 +452,258 @@ p {
 
 /* Lab 7 */
 
-.lab7-controls {
-    margin: 20px 0 25px;
-    padding: 16px;
-    background: #fafafa;
-    border: 1px solid #dddddd;
-    border-radius: 7px;
+#visualization-section {
+    width: 100%;
 }
 
-.lab7-buttons {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 14px;
+#visualization-section > h2 {
+    margin-bottom: 10px;
 }
 
-.lab7-buttons button {
-    padding: 7px 15px;
-    border: 1px solid #bbbbbb;
-    border-radius: 5px;
-    background: #ffffff;
-    color: #333333;
-    font-size: 13px;
-    cursor: pointer;
-}
-
-.lab7-buttons button:hover {
-    background: #333333;
-    color: #ffffff;
-}
-
-.lab7-slider-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
-}
-
-.lab7-slider-row label {
-    font-size: 13px;
-    font-weight: 600;
-}
-
-#time-slider {
-    flex: 1;
-    min-width: 250px;
-    cursor: pointer;
-}
-
-.lab7-date-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.lab7-date-row label {
-    font-size: 13px;
-    font-weight: 600;
-}
-
-#date-picker {
-    padding: 6px 8px;
-    border: 1px solid #bbbbbb;
-    border-radius: 5px;
-    background: #ffffff;
-    font-family: Arial, sans-serif;
-    font-size: 13px;
-}
-
-.current-day {
-    margin-top: 12px;
-    font-size: 16px;
-    font-weight: 700;
-    color: #1a0953;
-}
-
-
-/* =========================
-   Lab 7: Legend + Network
-   ========================= */
-
-.lab7-network-layout {
-    display: grid !important;
-
-    grid-template-columns: 220px 1fr;
-
-    gap: 20px;
-
-    width: 100% !important;
-    max-width: 1000px !important;
-
-    margin: 25px auto;
-
+.lab7-layout {
+    display: grid;
+    grid-template-columns: 250px minmax(0, 1fr);
+    gap: 12px;
+    width: 100%;
+    max-width: 1180px;
+    margin: 12px auto;
     align-items: stretch;
 }
 
-
-/* Legend */
-
 .lab7-legend {
-    width: 220px;
-
-    padding: 14px;
-
-    border: 1px solid #dddddd;
+    width: 250px;
+    padding: 3px;
+    border: 1px solid #dfe3e8;
     border-radius: 7px;
-
-    background: #fafafa;
-
+    background: #faf5ec;
     box-sizing: border-box;
 }
 
 .lab7-legend h3 {
-    margin: 0 0 14px;
-
-    font-size: 17px;
-    color: #1a0953;
+    margin: 0 0 3px;
+    font-size: 14px;
+    line-height: 1.15;
 }
 
-.lab7-legend p {
-    margin: 8px 0;
-
-    font-size: 12px;
-    line-height: 1.45;
+.lab7-legend > p:first-of-type {
+    margin: 0 0 5px;
+    font-size: 9px;
+    line-height: 1.25;
 }
 
 .lab7-legend-title {
-    margin-top: 14px !important;
-    margin-bottom: 7px !important;
-
-    font-weight: 700;
-    font-size: 13px !important;
+    margin: 6px 0 3px !important;
+    padding-top: 5px;
+    font-size: 10px !important;
 }
 
 .lab7-legend-item {
-    display: flex;
-    align-items: center;
-
-    gap: 6px;
-
-    margin: 5px 0;
-
-    font-size: 12px;
+    margin: 1px 0;
+    min-height: 15px;
+    font-size: 9px;
 }
 
 .lab7-legend-symbol {
-    flex-shrink: 0;
+    flex: 0 0 18px;
 }
 
+.lab7-sector-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 8px;
+    row-gap: 2px;
+}
 
-/* Network */
+.lab7-sector-dot {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 9px;
+    border: 1px solid #777;
+    border-radius: 50%;
+}
+
+.lab7-region-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lab7-region-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-height: 20px;
+    color: #374151;
+    font-size: 10px;
+}
+
+.lab7-region-item svg {
+    flex: 0 0 24px;
+}
+
+.lab7-size-legend {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 0 2px;
+}
+
+.lab7-size-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    width: 31%;
+    text-align: center;
+}
+
+.lab7-size-item svg {
+    display: block;
+    width: 55px;
+    height: 48px;
+}
+
+.lab7-size-item span {
+    color: #374151;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.1;
+}
+
+.lab7-size-item small {
+    color: #4b5563;
+    font-size: 9px;
+    line-height: 1.1;
+}
+
+.lab7-pattern-list,
+.lab7-line-size-list,
+.lab7-opacity-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.lab7-pattern-item,
+.lab7-line-size-item,
+.lab7-opacity-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 17px;
+    color: #374151;
+    font-size: 10px;
+    line-height: 1.1;
+}
+
+.lab7-pattern-item svg,
+.lab7-line-size-item svg,
+.lab7-opacity-item svg {
+    flex: 0 0 105px;
+    width: 105px;
+    height: 17px;
+}
+
+.lab7-legend-note {
+    margin-top: 7px !important;
+    padding: 5px 6px;
+    border-radius: 5px;
+    background: #f1f3f6;
+    color: #667085;
+    font-size: 9px !important;
+    line-height: 1.25 !important;
+}
+
+.lab7-right-column {
+    display: grid;
+    grid-template-rows: auto 1fr;
+    gap: 10px;
+    min-width: 0;
+}
+
+.lab7-controls {
+    padding: 8px 12px 7px;
+}
+
+.lab7-controls::before {
+    margin-bottom: 5px;
+    font-size: 18px;
+}
+
+.lab7-buttons {
+    gap: 6px;
+    margin-bottom: 5px;
+}
+
+.lab7-buttons button {
+    min-width: 65px;
+    padding: 5px 9px;
+    font-size: 10px;
+}
+
+.lab7-slider-row {
+    gap: 7px;
+    margin-bottom: 3px;
+}
+
+.lab7-slider-row label {
+    font-size: 10px;
+}
+
+#day-label {
+    min-width: 34px;
+    font-size: 10px;
+}
+
+.lab7-date-row {
+    gap: 5px;
+}
+
+.lab7-date-row label {
+    font-size: 10px;
+}
+
+#date-picker {
+    width: 105px;
+    padding: 4px 6px;
+    font-size: 10px;
+}
+
+.current-day {
+    margin-top: 3px;
+    font-size: 12px;
+}
 
 .lab7-network {
     position: relative;
-
     width: 100%;
     min-width: 0;
-
-    height: 700px;
-
-    border: 1px solid #dddddd;
-    border-radius: 7px;
-
+    height: 650px;
+    border: 1px solid #dfe3e8;
+    border-radius: 8px;
     background: #ffffff;
-
     overflow: hidden;
-
     box-sizing: border-box;
 }
 
 .lab7-network #visualization {
     width: 100% !important;
     height: 100% !important;
-
     max-width: none !important;
-
     margin: 0 !important;
-
     overflow: hidden;
 }
 
 .lab7-network #visualization svg {
     display: block;
-
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
 }
-
-
-/* Network graphics */
 
 .network-link {
     stroke: #555555;
     stroke-linecap: round;
     fill: none;
-
     vector-effect: non-scaling-stroke;
 }
 
@@ -669,59 +723,47 @@ p {
 
 .network-node:hover path {
     stroke: #111111;
-    stroke-width: 3px;
+    stroke-width: 2.5px;
 }
 
 .node-label {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
     fill: #333333;
     pointer-events: none;
 }
 
 .network-summary {
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 600;
     fill: #333333;
 }
 
 .network-date {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 700;
     fill: #1a0953;
 }
 
-
-/* Tooltip */
-
 #tooltip {
     position: fixed;
-
     max-width: 270px;
-
     padding: 10px 12px;
-
     background: #ffffff;
     color: #222222;
-
     border: 1px solid #cccccc;
     border-radius: 5px;
-
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.14);
-
     font-family: Arial, sans-serif;
     font-size: 12px;
     line-height: 1.55;
-
     pointer-events: none;
-
     opacity: 0;
     z-index: 1000;
 }
 
 #tooltip .tooltip-country {
     margin-bottom: 5px;
-
     font-size: 13px;
     font-weight: 700;
 }
@@ -731,56 +773,31 @@ p {
     color: #555555;
 }
 
-
-/* =========================
-   Lab 7 Responsive
-   Keep TWO columns
-   ========================= */
-
-@media (max-width: 800px) {
-
-    .lab7-network-layout {
-        display: grid !important;
-
-        grid-template-columns: 220px 500px;
-
-        gap: 20px;
-
-        width: max-content !important;
-        max-width: none !important;
-
-        overflow-x: auto;
+@media (max-width: 850px) {
+    .lab7-layout {
+        grid-template-columns: 1fr;
     }
 
     .lab7-legend {
-        width: 220px;
+        width: 100%;
     }
 
     .lab7-network {
-        width: 500px;
-        height: 700px;
+        height: 650px;
+        min-height: 650px;
     }
 }
 
-
 @media (max-width: 600px) {
-
     .lab7-slider-row {
-        display: block;
+        grid-template-columns: auto 1fr;
     }
 
-    #time-slider {
-        width: 100%;
-        min-width: 0;
-        margin-top: 8px;
+    #day-label {
+        display: none;
     }
 
     .lab7-date-row {
-        display: block;
-    }
-
-    #date-picker {
         margin-top: 6px;
     }
 }
-

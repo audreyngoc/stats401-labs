@@ -103,160 +103,103 @@
             </h2>
 
             <div class="visualization-note">
-
                 The network displays the commercial relationships
                 active on the selected day. Company nodes remain
                 persistent across time to help preserve the mental
                 map, while links enter and exit as relationships
                 change.
-
             </div>
 
+            <div class="lab7-layout">
 
-            <h3 class="design-subheading">
-                Temporal Controls
-            </h3>
+                <aside class="lab7-legend-panel">
 
+                    <h2>Encoding Legend</h2>
 
-            <div class="lab7-controls">
+                    <p class="legend-description">
+                        How visual properties represent data
+                        in the network.
+                    </p>
 
-                <div class="lab7-buttons">
-
-                    <button
-                        id="play"
-                        type="button">
-                        Play
-                    </button>
-
-                    <button
-                        id="pause"
-                        type="button">
-                        Pause
-                    </button>
-
-                    <button
-                        id="reset"
-                        type="button">
-                        Reset
-                    </button>
-
-                </div>
-
-
-                <div class="lab7-slider-row">
-
-                    <label for="time-slider">
-                        Time:
-                    </label>
-
-                    <input
-                        id="time-slider"
-                        type="range"
-                        min="1"
-                        max="60"
-                        value="1"
-                        step="1">
-
-                </div>
-
-
-                <div class="lab7-date-row">
-
-                    <label for="date-picker">
-                        Select date:
-                    </label>
-
-                    <input
-                        id="date-picker"
-                        type="date">
-
-                </div>
-
-
-                <div
-                    id="current-day"
-                    class="current-day">
-                    Day 1
-                </div>
-
-            </div>
-
-
-            <div class="lab7-network-layout">
-
-                <aside class="lab7-legend">
-
-                    <h3>
-                        Encoding Legend
-                    </h3>
-
-                    <div id="legend">
-                    </div>
+                    <div id="legend"></div>
 
                 </aside>
 
-                <div class="lab7-network">
 
-                    <div id="visualization">
+                <div class="lab7-right-column">
+
+                    <!-- THE ORIGINAL WORKING CONTROLS GO HERE -->
+
+                    <div class="lab7-controls">
+
+                        <div class="lab7-buttons">
+
+                            <button
+                                id="play"
+                                type="button">
+                                Play
+                            </button>
+
+                            <button
+                                id="pause"
+                                type="button">
+                                Pause
+                            </button>
+
+                            <button
+                                id="reset"
+                                type="button">
+                                Reset
+                            </button>
+
+                        </div>
+
+                        <div class="lab7-slider-row">
+
+                            <label for="time-slider">
+                                Time:
+                            </label>
+
+                            <input
+                                id="time-slider"
+                                type="range"
+                                min="1"
+                                max="60"
+                                value="1"
+                                step="1">
+
+                            <span id="day-label">
+                                Day 1
+                            </span>
+
+                            <label for="date-picker">
+                                Select date:
+                            </label>
+
+                            <input
+                                id="date-picker"
+                                type="date">
+
+                        </div>
+
+                        <div
+                            id="current-day"
+                            class="current-day">
+                            Day 1
+                        </div>
+
+                    </div>
+
+
+                    <div class="lab7-network">
+
+                        <div id="visualization"></div>
+
+                        <div id="tooltip"></div>
+
                     </div>
 
                 </div>
-
-            </div>
-
-
-            <h3 class="design-subheading">
-                Interaction
-            </h3>
-
-            <div class="visualization-note">
-
-                <strong>
-                    Play:
-                </strong>
-                Automatically advances through the 60 days.
-
-                <br><br>
-
-                <strong>
-                    Pause:
-                </strong>
-                Stops the animation so users can inspect
-                the current network state.
-
-                <br><br>
-
-                <strong>
-                    Reset:
-                </strong>
-                Returns the visualization to Day 1.
-
-                <br><br>
-
-                <strong>
-                    Time slider:
-                </strong>
-                Allows users to manually inspect any of the
-                60 days.
-
-                <br><br>
-
-                <strong>
-                    Date selector:
-                </strong>
-                Allows users to select a specific date directly.
-                The selected date is synchronized with the
-                time slider.
-
-                <br><br>
-
-                <strong>
-                    Hover:
-                </strong>
-                Hover over a company to inspect its sector,
-                region, and current transaction volume.
-                Hover over a link to inspect transaction
-                details.
 
             </div>
 

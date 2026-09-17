@@ -1,155 +1,245 @@
-// lab 7 — temporal commercial network visualization
+const width = 900;
+const height = 650;
 
-const width = 760;
-const height = 700;
-
-const svg = d3.select("#visualization")
-    .append("svg")
-    .attr("viewBox", `0 0 ${width} ${height}`)
-    .attr("preserveAspectRatio", "xMidYMid meet")
-    .style("width", "100%")
-    .style("height", "100%")
-    .style("display", "block");
+const svg =
+    d3.select("#visualization")
+        .append("svg")
+        .attr(
+            "viewBox",
+            `0 0 ${width} ${height}`
+        )
+        .attr(
+            "preserveAspectRatio",
+            "xMidYMid meet"
+        )
+        .style(
+            "width",
+            "100%"
+        )
+        .style(
+            "height",
+            "100%"
+        )
+        .style(
+            "display",
+            "block"
+        );
 
 let companies = [];
 let transactions = [];
 let currentDay = 1;
 let timer = null;
 
+const linksGroup =
+    svg.append("g")
+        .attr(
+            "class",
+            "links"
+        );
 
-// Network groups
+const nodesGroup =
+    svg.append("g")
+        .attr(
+            "class",
+            "nodes"
+        );
 
-const linksGroup = svg.append("g")
-    .attr("class", "links");
+const labelsGroup =
+    svg.append("g")
+        .attr(
+            "class",
+            "labels"
+        );
 
-const nodesGroup = svg.append("g")
-    .attr("class", "nodes");
-
-const labelsGroup = svg.append("g")
-    .attr("class", "labels");
-
-const summaryGroup = svg.append("g")
-    .attr("class", "network-summary-group")
-    .attr("transform", "translate(30, 32)");
-
-const dateLabel = svg.append("text")
-    .attr("class", "network-date")
-    .attr("x", width - 30)
-    .attr("y", 32)
-    .attr("text-anchor", "end");
-
-
-// Tooltip
-
-const tooltip = d3.select("#tooltip");
-
-
-// Scales
-
-const sectorColors = d3.scaleOrdinal()
-    .range(d3.schemeTableau10);
-
-const regionSymbols = d3.scaleOrdinal()
-    .range([
-        d3.symbolCircle,
-        d3.symbolSquare,
-        d3.symbolTriangle,
-        d3.symbolDiamond,
-        d3.symbolStar,
-        d3.symbolWye
-    ]);
-
-const nodeSizeScale = d3.scaleSqrt()
-    .range([7, 27]);
-
-const linkWidthScale = d3.scaleLinear()
-    .range([2.5, 8]);
-
-const linkOpacityScale = d3.scaleLinear()
-    .range([0.55, 0.95]);
-
-
-// Force simulation
-
-const simulation = d3.forceSimulation()
-    .force(
-        "link",
-        d3.forceLink()
-            .id(d => d.id)
-            .distance(125)
-            .strength(0.35)
-    )
-    .force(
-        "charge",
-        d3.forceManyBody()
-            .strength(-250)
-    )
-    .force(
-        "center",
-        d3.forceCenter(
-            width / 2,
-            height / 2 + 20
+const summaryGroup =
+    svg.append("g")
+        .attr(
+            "class",
+            "network-summary-group"
         )
-    )
-    .force(
-        "x",
-        d3.forceX(
-            width / 2
+        .attr(
+            "transform",
+            "translate(30, 34)"
+        );
+
+const dateLabel =
+    svg.append("text")
+        .attr(
+            "class",
+            "network-date"
         )
-        .strength(0.04)
-    )
-    .force(
-        "y",
-        d3.forceY(
-            height / 2 + 20
+        .attr(
+            "x",
+            width - 30
         )
-        .strength(0.04)
-    )
-    .force(
-        "collision",
-        d3.forceCollide()
-            .radius(38)
-    )
-    .on(
-        "tick",
-        ticked
-    );
-
-
-// Keep nodes inside the network
-
-function keepInside(d) {
-
-    const radius = 32;
-
-    d.x = Math.max(
-        45 + radius,
-        Math.min(
-            width - 45 - radius,
-            d.x
+        .attr(
+            "y",
+            34
         )
-    );
+        .attr(
+            "text-anchor",
+            "end"
+        );
 
-    d.y = Math.max(
-        80 + radius,
-        Math.min(
-            height - 55 - radius,
-            d.y
-        )
+const tooltip =
+    d3.select("#tooltip");
+
+const sectorColors =
+    d3.scaleOrdinal()
+        .range(
+            d3.schemeTableau10
+        );
+
+const regionSymbols =
+    d3.scaleOrdinal()
+        .range([
+            d3.symbolCircle,
+            d3.symbolSquare,
+            d3.symbolTriangle
+        ]);
+
+const nodeSizeScale =
+    d3.scaleSqrt()
+        .range([
+            9,
+            32
+        ]);
+
+const linkWidthScale =
+    d3.scaleThreshold()
+        .domain([
+            10000,
+            50000,
+            100000
+        ])
+        .range([
+            2.5,
+            4,
+            6,
+            8
+        ]);
+
+const transactionPatterns = {
+    goods: "0",
+    materials: "16 7",
+    services: "2 5",
+    shipping: "12 5 2 5",
+    components: "20 5 3 5 3 5"
+};
+
+function getTransactionPattern(d) {
+    const types =
+        d.transaction_types || [];
+
+    const type =
+        types.length
+            ? String(
+                types[0]
+            )
+                .toLowerCase()
+                .trim()
+            : "goods";
+
+    return (
+        transactionPatterns[type] ||
+        transactionPatterns.goods
     );
 }
 
+function transactionCountOpacity(count) {
+    if (count <= 2) {
+        return 0.25;
+    }
 
-// Update positions
+    if (count <= 5) {
+        return 0.45;
+    }
+
+    if (count <= 10) {
+        return 0.70;
+    }
+
+    return 0.95;
+}
+
+const simulation =
+    d3.forceSimulation()
+        .force(
+            "link",
+            d3.forceLink()
+                .id(
+                    d => d.id
+                )
+                .distance(175)
+                .strength(0.35)
+        )
+        .force(
+            "charge",
+            d3.forceManyBody()
+                .strength(-340)
+        )
+        .force(
+            "center",
+            d3.forceCenter(
+                width / 2,
+                height / 2 + 45
+            )
+        )
+        .force(
+            "x",
+            d3.forceX(
+                width / 2
+            )
+                .strength(0.035)
+        )
+        .force(
+            "y",
+            d3.forceY(
+                height / 2 + 45
+            )
+                .strength(0.035)
+        )
+        .force(
+            "collision",
+            d3.forceCollide()
+                .radius(52)
+        )
+        .on(
+            "tick",
+            ticked
+        );
+
+function keepInside(d) {
+    const radius = 34;
+
+    d.x =
+        Math.max(
+            55 + radius,
+            Math.min(
+                width - 55 - radius,
+                d.x
+            )
+        );
+
+    d.y =
+        Math.max(
+            105 + radius,
+            Math.min(
+                height - 55 - radius,
+                d.y
+            )
+        );
+}
 
 function ticked() {
-
     companies.forEach(
         keepInside
     );
 
     linksGroup
-        .selectAll(".network-link")
+        .selectAll(
+            ".network-link"
+        )
         .attr(
             "x1",
             d => d.source.x
@@ -168,7 +258,9 @@ function ticked() {
         );
 
     nodesGroup
-        .selectAll(".network-node")
+        .selectAll(
+            ".network-node"
+        )
         .attr(
             "transform",
             d =>
@@ -176,37 +268,32 @@ function ticked() {
         );
 
     labelsGroup
-        .selectAll(".node-label")
+        .selectAll(
+            ".node-label"
+        )
         .attr(
             "transform",
             d =>
-                `translate(${d.x},${d.y + 40})`
+                `translate(${d.x},${d.y + 43})`
         );
 }
-
-
-// Calculate transaction volume
 
 function companyVolume(
     companyId,
     currentTransactions
 ) {
-
     return d3.sum(
         currentTransactions.filter(
             d =>
                 d.source === companyId ||
                 d.target === companyId
         ),
-        d => d.amount_usd
+        d =>
+            d.amount_usd
     );
 }
 
-
-// Create an undirected link key
-
 function linkKey(d) {
-
     const source =
         typeof d.source === "object"
             ? d.source.id
@@ -225,71 +312,67 @@ function linkKey(d) {
         .join("-");
 }
 
-
-// Combine transactions between companies
-
 function aggregateLinks(
     currentTransactions
 ) {
+    const grouped =
+        d3.rollup(
+            currentTransactions,
+            values => ({
+                source:
+                    values[0].source,
 
-    const grouped = d3.rollup(
-        currentTransactions,
+                target:
+                    values[0].target,
 
-        values => ({
-            source:
-                values[0].source,
-
-            target:
-                values[0].target,
-
-            amount_usd:
-                d3.sum(
-                    values,
-                    d => d.amount_usd
-                ),
-
-            transaction_count:
-                d3.sum(
-                    values,
-                    d => d.transaction_count
-                ),
-
-            transaction_types: [
-                ...new Set(
-                    values.map(
+                amount_usd:
+                    d3.sum(
+                        values,
                         d =>
-                            d.transaction_type
-                    )
-                )
-            ]
-        }),
+                            d.amount_usd
+                    ),
 
-        d => linkKey(d)
-    );
+                transaction_count:
+                    d3.sum(
+                        values,
+                        d =>
+                            d.transaction_count
+                    ),
+
+                transaction_types:
+                    [
+                        ...new Set(
+                            values.map(
+                                d =>
+                                    String(
+                                        d.transaction_type
+                                    )
+                                        .toLowerCase()
+                                        .trim()
+                            )
+                        )
+                    ]
+            }),
+            d =>
+                linkKey(d)
+        );
 
     return Array.from(
         grouped.values()
     );
 }
 
-
-// Find company
-
 function getCompany(id) {
-
     return companies.find(
-        d => d.id === id
+        d =>
+            d.id === id
     );
 }
-
-
-// Tooltip
 
 function showTooltip(
     event,
     html
 ) {
-
     tooltip
         .html(html)
         .style(
@@ -306,9 +389,7 @@ function showTooltip(
         );
 }
 
-
 function moveTooltip(event) {
-
     tooltip
         .style(
             "left",
@@ -320,28 +401,23 @@ function moveTooltip(event) {
         );
 }
 
-
 function hideTooltip() {
-
     tooltip.style(
         "opacity",
         0
     );
 }
 
-
-// Highlight company connections
-
 function highlightConnections(
     companyId
 ) {
-
     linksGroup
-        .selectAll(".network-link")
+        .selectAll(
+            ".network-link"
+        )
         .style(
             "opacity",
             d => {
-
                 const source =
                     typeof d.source === "object"
                         ? d.source.id
@@ -352,86 +428,60 @@ function highlightConnections(
                         ? d.target.id
                         : d.target;
 
-                if (
+                return (
                     source === companyId ||
                     target === companyId
-                ) {
-                    return 1;
-                }
-
-                return 0.12;
+                )
+                    ? 1
+                    : 0.12;
             }
         );
 
     nodesGroup
-        .selectAll(".network-node")
-        .style(
-            "opacity",
-            d => {
-
-                if (
-                    d.id === companyId
-                ) {
-                    return 1;
-                }
-
-                const connected =
-                    linksGroup
-                        .selectAll(
-                            ".network-link"
-                        )
-                        .filter(
-                            link => {
-
-                                const source =
-                                    typeof link.source === "object"
-                                        ? link.source.id
-                                        : link.source;
-
-                                const target =
-                                    typeof link.target === "object"
-                                        ? link.target.id
-                                        : link.target;
-
-                                return (
-                                    source === companyId &&
-                                    target === d.id
-                                ) || (
-                                    target === companyId &&
-                                    source === d.id
-                                );
-                            }
-                        )
-                        .size() > 0;
-
-                return connected
-                    ? 1
-                    : 0.3;
-            }
-        );
-}
-
-
-// Restore normal appearance
-
-function resetHighlight() {
-
-    linksGroup
-        .selectAll(".network-link")
+        .selectAll(
+            ".network-node"
+        )
         .style(
             "opacity",
             d =>
-                linkOpacityScale(
+                d.id === companyId
+                    ? 1
+                    : 0.35
+        );
+
+    labelsGroup
+        .selectAll(
+            ".node-label"
+        )
+        .style(
+            "opacity",
+            d =>
+                d.id === companyId
+                    ? 1
+                    : 0.35
+        );
+}
+
+function resetHighlight() {
+    linksGroup
+        .selectAll(
+            ".network-link"
+        )
+        .style(
+            "opacity",
+            d =>
+                transactionCountOpacity(
                     d.transaction_count
                 )
         );
 
     nodesGroup
-        .selectAll(".network-node")
+        .selectAll(
+            ".network-node"
+        )
         .style(
             "opacity",
             d => {
-
                 const volume =
                     companyVolume(
                         d.id,
@@ -446,21 +496,25 @@ function resetHighlight() {
                     : 0.35;
             }
         );
+
+    labelsGroup
+        .selectAll(
+            ".node-label"
+        )
+        .style(
+            "opacity",
+            1
+        );
 }
-
-
-// Update summary
 
 function updateSummary(
     currentTransactions
 ) {
-
     const activeCompanies =
         new Set();
 
     currentTransactions.forEach(
         d => {
-
             activeCompanies.add(
                 d.source
             );
@@ -479,7 +533,8 @@ function updateSummary(
     const totalValue =
         d3.sum(
             currentTransactions,
-            d => d.amount_usd
+            d =>
+                d.amount_usd
         );
 
     summaryGroup
@@ -504,7 +559,7 @@ function updateSummary(
         )
         .attr(
             "y",
-            19
+            18
         )
         .text(
             `Active links: ${currentLinks.length}`
@@ -518,71 +573,57 @@ function updateSummary(
         )
         .attr(
             "y",
-            38
+            36
         )
         .text(
             `Total transaction value: $${d3.format(",.0f")(totalValue)}`
         );
 }
 
-
-// Dragging
-
 function dragStarted(
     event,
     d
 ) {
-
     if (!event.active) {
-
         simulation
             .alphaTarget(0.2)
             .restart();
-
     }
 
     d.fx = d.x;
     d.fy = d.y;
 }
 
-
 function dragged(
     event,
     d
 ) {
-
     d.fx = event.x;
     d.fy = event.y;
 
     keepInside(d);
 }
 
-
 function dragEnded(
     event,
     d
 ) {
-
     if (!event.active) {
-        simulation.alphaTarget(0);
+        simulation
+            .alphaTarget(0);
     }
 
     d.fx = null;
     d.fy = null;
 }
 
-
-// Update network
-
 function updateNetwork(
     currentTransactions
 ) {
-
     const currentLinks =
         aggregateLinks(
             currentTransactions
         );
-
 
     const volumes =
         companies.map(
@@ -593,56 +634,35 @@ function updateNetwork(
                 )
         );
 
-
     const maxVolume =
-        d3.max(volumes) || 1;
+        d3.max(
+            volumes
+        ) || 1;
 
     nodeSizeScale.domain([
         0,
         maxVolume
     ]);
 
-
-    const maxAmount =
-        d3.max(
-            currentLinks,
-            d => d.amount_usd
-        ) || 1;
-
-    linkWidthScale.domain([
-        0,
-        maxAmount
-    ]);
-
-
-    const maxCount =
-        d3.max(
-            currentLinks,
-            d => d.transaction_count
-        ) || 1;
-
-    linkOpacityScale.domain([
-        0,
-        maxCount
-    ]);
-
-
     const simulationLinks =
         currentLinks.map(
             d => ({
-                source: d.source,
-                target: d.target,
+                source:
+                    d.source,
+
+                target:
+                    d.target,
+
                 amount_usd:
                     d.amount_usd,
+
                 transaction_count:
                     d.transaction_count,
+
                 transaction_types:
                     d.transaction_types
             })
         );
-
-
-    // Links
 
     const linkSelection =
         linksGroup
@@ -651,9 +671,9 @@ function updateNetwork(
             )
             .data(
                 simulationLinks,
-                d => linkKey(d)
+                d =>
+                    linkKey(d)
             );
-
 
     linkSelection
         .exit()
@@ -664,7 +684,6 @@ function updateNetwork(
             0
         )
         .remove();
-
 
     const linkEnter =
         linkSelection
@@ -682,129 +701,136 @@ function updateNetwork(
                 "stroke-linecap",
                 "round"
             )
+            .attr(
+                "stroke-dasharray",
+                d =>
+                    getTransactionPattern(d)
+            )
             .style(
                 "opacity",
                 0
-            )
+            );
 
-            .on(
-                "mouseover",
-                function(event, d) {
+    linkEnter
+        .on(
+            "mouseover",
+            function(event, d) {
+                const sourceId =
+                    typeof d.source === "object"
+                        ? d.source.id
+                        : d.source;
 
-                    const sourceId =
-                        typeof d.source === "object"
-                            ? d.source.id
-                            : d.source;
+                const targetId =
+                    typeof d.target === "object"
+                        ? d.target.id
+                        : d.target;
 
-                    const targetId =
-                        typeof d.target === "object"
-                            ? d.target.id
-                            : d.target;
-
-                    const source =
-                        getCompany(sourceId);
-
-                    const target =
-                        getCompany(targetId);
-
-
-                    d3.select(this)
-                        .style(
-                            "stroke",
-                            "#111111"
-                        )
-                        .style(
-                            "opacity",
-                            1
-                        )
-                        .style(
-                            "stroke-width",
-                            Math.max(
-                                4,
-                                linkWidthScale(
-                                    d.amount_usd
-                                )
-                            )
-                        );
-
-
-                    showTooltip(
-                        event,
-                        `
-                        <div class="tooltip-country">
-                            ${
-                                source
-                                    ? source.company_name
-                                    : sourceId
-                            }
-                            ↔
-                            ${
-                                target
-                                    ? target.company_name
-                                    : targetId
-                            }
-                        </div>
-
-                        <div>
-                            <span class="tooltip-label">
-                                Transaction type:
-                            </span>
-                            ${d.transaction_types.join(", ")}
-                        </div>
-
-                        <div>
-                            <span class="tooltip-label">
-                                Transaction amount:
-                            </span>
-                            $${d3.format(",.2f")(
-                                d.amount_usd
-                            )}
-                        </div>
-
-                        <div>
-                            <span class="tooltip-label">
-                                Transaction count:
-                            </span>
-                            ${d3.format(",")(
-                                d.transaction_count
-                            )}
-                        </div>
-                        `
+                const source =
+                    getCompany(
+                        sourceId
                     );
-                }
-            )
 
-            .on(
-                "mousemove",
-                moveTooltip
-            )
+                const target =
+                    getCompany(
+                        targetId
+                    );
 
-            .on(
-                "mouseout",
-                function(event, d) {
-
-                    d3.select(this)
-                        .style(
-                            "stroke",
-                            "#555555"
-                        )
-                        .style(
-                            "stroke-width",
+                d3.select(this)
+                    .style(
+                        "stroke",
+                        "#111111"
+                    )
+                    .style(
+                        "opacity",
+                        1
+                    )
+                    .style(
+                        "stroke-width",
+                        Math.max(
+                            4,
                             linkWidthScale(
                                 d.amount_usd
                             )
                         )
-                        .style(
-                            "opacity",
-                            linkOpacityScale(
-                                d.transaction_count
-                            )
-                        );
+                    );
 
-                    hideTooltip();
-                }
-            );
+                showTooltip(
+                    event,
+                    `
+                    <div class="tooltip-country">
+                        ${
+                            source
+                                ? source.company_name
+                                : sourceId
+                        }
+                        ↔
+                        ${
+                            target
+                                ? target.company_name
+                                : targetId
+                        }
+                    </div>
 
+                    <div>
+                        <span class="tooltip-label">
+                            Transaction type:
+                        </span>
+                        ${d.transaction_types.join(", ")}
+                    </div>
+
+                    <div>
+                        <span class="tooltip-label">
+                            Transaction amount:
+                        </span>
+                        $${d3.format(",.0f")(
+                            d.amount_usd
+                        )}
+                    </div>
+
+                    <div>
+                        <span class="tooltip-label">
+                            Transaction count:
+                        </span>
+                        ${d3.format(",")(
+                            d.transaction_count
+                        )}
+                    </div>
+                    `
+                );
+            }
+        )
+        .on(
+            "mousemove",
+            moveTooltip
+        )
+        .on(
+            "mouseout",
+            function(event, d) {
+                d3.select(this)
+                    .style(
+                        "stroke",
+                        "#555555"
+                    )
+                    .style(
+                        "opacity",
+                        transactionCountOpacity(
+                            d.transaction_count
+                        )
+                    )
+                    .style(
+                        "stroke-width",
+                        linkWidthScale(
+                            d.amount_usd
+                        )
+                    )
+                    .attr(
+                        "stroke-dasharray",
+                        getTransactionPattern(d)
+                    );
+
+                hideTooltip();
+            }
+        );
 
     linkEnter
         .merge(linkSelection)
@@ -817,16 +843,18 @@ function updateNetwork(
                     d.amount_usd
                 )
         )
+        .attr(
+            "stroke-dasharray",
+            d =>
+                getTransactionPattern(d)
+        )
         .style(
             "opacity",
             d =>
-                linkOpacityScale(
+                transactionCountOpacity(
                     d.transaction_count
                 )
         );
-
-
-    // Nodes
 
     const nodeSelection =
         nodesGroup
@@ -835,9 +863,13 @@ function updateNetwork(
             )
             .data(
                 companies,
-                d => d.id
+                d =>
+                    d.id
             );
 
+    nodeSelection
+        .exit()
+        .remove();
 
     const nodeEnter =
         nodeSelection
@@ -861,91 +893,82 @@ function updateNetwork(
                         "end",
                         dragEnded
                     )
-            )
-
-            .on(
-                "mouseover",
-                function(event, d) {
-
-                    highlightConnections(
-                        d.id
-                    );
-
-
-                    const volume =
-                        companyVolume(
-                            d.id,
-                            currentTransactions
-                        );
-
-
-                    showTooltip(
-                        event,
-                        `
-                        <div class="tooltip-country">
-                            ${d.company_name}
-                        </div>
-
-                        <div>
-                            <span class="tooltip-label">
-                                Company ID:
-                            </span>
-                            ${d.id}
-                        </div>
-
-                        <div>
-                            <span class="tooltip-label">
-                                Sector:
-                            </span>
-                            ${d.sector}
-                        </div>
-
-                        <div>
-                            <span class="tooltip-label">
-                                Region:
-                            </span>
-                            ${d.region}
-                        </div>
-
-                        <div>
-                            <span class="tooltip-label">
-                                Current transaction volume:
-                            </span>
-                            $${d3.format(",.2f")(
-                                volume
-                            )}
-                        </div>
-                        `
-                    );
-                }
-            )
-
-            .on(
-                "mousemove",
-                moveTooltip
-            )
-
-            .on(
-                "mouseout",
-                function() {
-
-                    resetHighlight();
-
-                    hideTooltip();
-                }
             );
-
 
     nodeEnter
         .append("path");
 
+    nodeEnter
+        .on(
+            "mouseover",
+            function(event, d) {
+                highlightConnections(
+                    d.id
+                );
+
+                const volume =
+                    companyVolume(
+                        d.id,
+                        currentTransactions
+                    );
+
+                showTooltip(
+                    event,
+                    `
+                    <div class="tooltip-country">
+                        ${d.company_name}
+                    </div>
+
+                    <div>
+                        <span class="tooltip-label">
+                            Company ID:
+                        </span>
+                        ${d.id}
+                    </div>
+
+                    <div>
+                        <span class="tooltip-label">
+                            Sector:
+                        </span>
+                        ${d.sector}
+                    </div>
+
+                    <div>
+                        <span class="tooltip-label">
+                            Region:
+                        </span>
+                        ${d.region}
+                    </div>
+
+                    <div>
+                        <span class="tooltip-label">
+                            Current transaction volume:
+                        </span>
+                        $${d3.format(",.0f")(
+                            volume
+                        )}
+                    </div>
+                    `
+                );
+            }
+        )
+        .on(
+            "mousemove",
+            moveTooltip
+        )
+        .on(
+            "mouseout",
+            function() {
+                resetHighlight();
+                hideTooltip();
+            }
+        );
 
     nodeSelection
         .merge(nodeEnter)
         .style(
             "opacity",
             d => {
-
                 const volume =
                     companyVolume(
                         d.id,
@@ -963,7 +986,6 @@ function updateNetwork(
         .attr(
             "d",
             d => {
-
                 const volume =
                     companyVolume(
                         d.id,
@@ -1004,9 +1026,6 @@ function updateNetwork(
             1.2
         );
 
-
-    // Labels
-
     const labelSelection =
         labelsGroup
             .selectAll(
@@ -1014,9 +1033,9 @@ function updateNetwork(
             )
             .data(
                 companies,
-                d => d.id
+                d =>
+                    d.id
             );
-
 
     labelSelection
         .enter()
@@ -1034,13 +1053,9 @@ function updateNetwork(
                 d.company_name
         );
 
-
     labelSelection
         .exit()
         .remove();
-
-
-    // Restart simulation
 
     simulation.nodes(
         companies
@@ -1056,82 +1071,69 @@ function updateNetwork(
         .alpha(0.12)
         .restart();
 
-
     updateSummary(
         currentTransactions
     );
 }
 
+function getAvailableDates() {
+    return Array.from(
+        new Set(
+            transactions.map(
+                d =>
+                    d3.timeFormat(
+                        "%Y-%m-%d"
+                    )(d.date)
+            )
+        )
+    ).sort();
+}
 
-// Get date for day
+function getDateForDay(
+    day
+) {
+    const dates =
+        getAvailableDates();
 
-function getDateForDay(day) {
-
-    if (!transactions.length) {
+    if (!dates.length) {
         return null;
     }
 
-    const firstDate =
-        d3.min(
-            transactions,
-            d => d.date
+    const index =
+        Math.max(
+            0,
+            Math.min(
+                dates.length - 1,
+                +day - 1
+            )
         );
 
-    return d3.timeDay.offset(
-        firstDate,
-        day - 1
+    return d3.timeParse(
+        "%Y-%m-%d"
+    )(
+        dates[index]
     );
 }
-
-
-// Get day from date
 
 function getDayForDate(
     dateString
 ) {
+    const dates =
+        getAvailableDates();
 
-    const selectedDate =
-        d3.timeParse(
-            "%Y-%m-%d"
-        )(dateString);
+    const index =
+        dates.indexOf(
+            dateString
+        );
 
-    if (
-        !selectedDate ||
-        !transactions.length
-    ) {
+    if (index === -1) {
         return null;
     }
 
-    const firstDate =
-        d3.min(
-            transactions,
-            d => d.date
-        );
-
-    const difference =
-        d3.timeDay.count(
-            firstDate,
-            selectedDate
-        );
-
-    const day =
-        difference + 1;
-
-    if (
-        day < 1 ||
-        day > 60
-    ) {
-        return null;
-    }
-
-    return day;
+    return index + 1;
 }
 
-
-// Update temporal controls
-
 function updateDateControls() {
-
     const currentDate =
         getDateForDay(
             currentDay
@@ -1141,18 +1143,15 @@ function updateDateControls() {
         return;
     }
 
-
     const dateValue =
         d3.timeFormat(
             "%Y-%m-%d"
         )(currentDate);
 
-
     const formattedDate =
         d3.timeFormat(
             "%B %d, %Y"
         )(currentDate);
-
 
     d3.select("#time-slider")
         .property(
@@ -1160,47 +1159,62 @@ function updateDateControls() {
             currentDay
         );
 
-
     d3.select("#date-picker")
         .property(
             "value",
             dateValue
         );
 
-
     d3.select("#current-day")
         .text(
             `Day ${currentDay}: ${formattedDate}`
         );
 
-
-    dateLabel
+    d3.select("#day-label")
         .text(
-            formattedDate
+            `Day ${currentDay}`
         );
+
+    dateLabel.text(
+        formattedDate
+    );
 }
 
-
-// Show selected day
-
 function showDay(day) {
+    const totalDays =
+        getAvailableDates().length;
+
+    if (!totalDays) {
+        return;
+    }
 
     currentDay =
         Math.max(
             1,
             Math.min(
-                60,
+                totalDays,
                 +day
             )
         );
 
+    const currentDate =
+        getDateForDay(
+            currentDay
+        );
+
+    const dateString =
+        d3.timeFormat(
+            "%Y-%m-%d"
+        )(currentDate);
 
     const currentTransactions =
         transactions.filter(
             d =>
-                d.day === currentDay
+                d3.timeFormat(
+                    "%Y-%m-%d"
+                )(d.date) ===
+                dateString
         );
-
 
     updateDateControls();
 
@@ -1209,75 +1223,84 @@ function showDay(day) {
     );
 }
 
-
-// Play
-
 function play() {
-
     if (timer !== null) {
         return;
     }
 
+    const totalDays =
+        getAvailableDates().length;
 
-    if (currentDay >= 60) {
+    if (!totalDays) {
+        return;
+    }
+
+    if (currentDay >= totalDays) {
         showDay(1);
     }
 
+    timer =
+        d3.interval(
+            () => {
+                if (
+                    currentDay >=
+                    totalDays
+                ) {
+                    pause();
+                    return;
+                }
 
-    timer = d3.interval(
-        () => {
-
-            if (currentDay >= 60) {
-
-                pause();
-
-                return;
-            }
-
-            showDay(
-                currentDay + 1
-            );
-
-        },
-        700
-    );
+                showDay(
+                    currentDay + 1
+                );
+            },
+            700
+        );
 }
 
-
-// Pause
-
 function pause() {
-
     if (timer !== null) {
-
         timer.stop();
-
         timer = null;
     }
 }
 
-
-// Reset
-
 function reset() {
-
     pause();
-
     showDay(1);
 }
 
+function formatLegendValue(
+    value
+) {
+    if (!Number.isFinite(value)) {
+        return "—";
+    }
 
-// Create legend
+    if (value >= 1000000) {
+        return `$${d3.format(".0f")(
+            value / 1000000
+        )}M`;
+    }
+
+    if (value >= 1000) {
+        return `$${d3.format(".0f")(
+            value / 1000
+        )}K`;
+    }
+
+    return `$${d3.format(".0f")(
+        value
+    )}`;
+}
 
 function createLegend() {
-
     const legend =
         d3.select("#legend");
 
     legend
         .selectAll("*")
         .remove();
-
 
     legend
         .append("p")
@@ -1286,69 +1309,48 @@ function createLegend() {
             "lab7-legend-title"
         )
         .text(
-            "Company sector:"
+            "Company sector (Node color)"
         );
 
-
-    const sectors = [
-        ...new Set(
-            companies.map(
-                d => d.sector
+    const sectors =
+        Array.from(
+            new Set(
+                companies.map(
+                    d => d.sector
+                )
             )
-        )
-    ];
+        );
 
+    const sectorList =
+        legend
+            .append("div")
+            .attr(
+                "class",
+                "lab7-sector-list"
+            );
 
     sectors.forEach(
         sector => {
-
             const item =
-                legend
+                sectorList
                     .append("div")
                     .attr(
                         "class",
                         "lab7-legend-item"
                     );
 
-
             item
-                .append("svg")
+                .append("span")
                 .attr(
                     "class",
-                    "lab7-legend-symbol"
+                    "lab7-sector-dot"
                 )
-                .attr(
-                    "width",
-                    18
-                )
-                .attr(
-                    "height",
-                    18
-                )
-                .append("circle")
-                .attr(
-                    "cx",
-                    9
-                )
-                .attr(
-                    "cy",
-                    9
-                )
-                .attr(
-                    "r",
-                    6
-                )
-                .attr(
-                    "fill",
+                .style(
+                    "background-color",
                     sectorColors(
                         sector
                     )
-                )
-                .attr(
-                    "stroke",
-                    "#333333"
                 );
-
 
             item
                 .append("span")
@@ -1358,6 +1360,97 @@ function createLegend() {
         }
     );
 
+    legend
+        .append("p")
+        .attr(
+            "class",
+            "lab7-legend-title"
+        )
+        .text(
+            "Geographic region (Node shape)"
+        );
+
+    const regions =
+        Array.from(
+            new Set(
+                companies.map(
+                    d => d.region
+                )
+            )
+        );
+
+    const regionList =
+        legend
+            .append("div")
+            .attr(
+                "class",
+                "lab7-region-list"
+            );
+
+    regions.forEach(
+        region => {
+            const row =
+                regionList
+                    .append("div")
+                    .attr(
+                        "class",
+                        "lab7-region-item"
+                    );
+
+            const regionSvg =
+                row
+                    .append("svg")
+                    .attr(
+                        "width",
+                        24
+                    )
+                    .attr(
+                        "height",
+                        24
+                    )
+                    .attr(
+                        "viewBox",
+                        "0 0 24 24"
+                    );
+
+            regionSvg
+                .append("path")
+                .attr(
+                    "d",
+                    d3.symbol()
+                        .type(
+                            regionSymbols(
+                                region
+                            )
+                        )
+                        .size(
+                            130
+                        )
+                )
+                .attr(
+                    "transform",
+                    "translate(12,12)"
+                )
+                .attr(
+                    "fill",
+                    "#ffffff"
+                )
+                .attr(
+                    "stroke",
+                    "#333333"
+                )
+                .attr(
+                    "stroke-width",
+                    1.3
+                );
+
+            row
+                .append("span")
+                .text(
+                    region
+                );
+        }
+    );
 
     legend
         .append("p")
@@ -1366,50 +1459,421 @@ function createLegend() {
             "lab7-legend-title"
         )
         .text(
-            "Encodings:"
+            "Transaction volume (Node size)"
         );
 
+    const volumeLegend =
+        legend
+            .append("div")
+            .attr(
+                "class",
+                "lab7-size-legend"
+            );
+
+    const volumeExamples = [
+        {
+            label: "Low",
+            range: "< $10K",
+            radius: 7
+        },
+        {
+            label: "Medium",
+            range: "$10K–$50K",
+            radius: 15
+        },
+        {
+            label: "High",
+            range: "> $50K",
+            radius: 22
+        }
+    ];
+
+    volumeExamples.forEach(
+        item => {
+            const group =
+                volumeLegend
+                    .append("div")
+                    .attr(
+                        "class",
+                        "lab7-size-item"
+                    );
+
+            group
+                .append("svg")
+                .attr(
+                    "width",
+                    55
+                )
+                .attr(
+                    "height",
+                    48
+                )
+                .attr(
+                    "viewBox",
+                    "0 0 55 48"
+                )
+                .append("circle")
+                .attr(
+                    "cx",
+                    27.5
+                )
+                .attr(
+                    "cy",
+                    24
+                )
+                .attr(
+                    "r",
+                    item.radius
+                )
+                .attr(
+                    "fill",
+                    "#d1d5db"
+                )
+                .attr(
+                    "stroke",
+                    "#555555"
+                );
+
+            group
+                .append("span")
+                .text(
+                    item.label
+                );
+
+            group
+                .append("small")
+                .text(
+                    item.range
+                );
+        }
+    );
 
     legend
         .append("p")
+        .attr(
+            "class",
+            "lab7-legend-title"
+        )
         .text(
-            "Node shape → geographic region."
+            "Transaction type (Link pattern)"
         );
 
+    const patternList =
+        legend
+            .append("div")
+            .attr(
+                "class",
+                "lab7-pattern-list"
+            );
+
+    const patternExamples = [
+        {
+            label: "Goods",
+            pattern:
+                transactionPatterns.goods
+        },
+        {
+            label: "Materials",
+            pattern:
+                transactionPatterns.materials
+        },
+        {
+            label: "Services",
+            pattern:
+                transactionPatterns.services
+        },
+        {
+            label: "Shipping",
+            pattern:
+                transactionPatterns.shipping
+        },
+        {
+            label: "Components",
+            pattern:
+                transactionPatterns.components
+        }
+    ];
+
+    patternExamples.forEach(
+        item => {
+            const row =
+                patternList
+                    .append("div")
+                    .attr(
+                        "class",
+                        "lab7-pattern-item"
+                    );
+
+            row
+                .append("svg")
+                .attr(
+                    "width",
+                    105
+                )
+                .attr(
+                    "height",
+                    17
+                )
+                .attr(
+                    "viewBox",
+                    "0 0 105 17"
+                )
+                .append("line")
+                .attr(
+                    "x1",
+                    1
+                )
+                .attr(
+                    "y1",
+                    8.5
+                )
+                .attr(
+                    "x2",
+                    104
+                )
+                .attr(
+                    "y2",
+                    8.5
+                )
+                .attr(
+                    "stroke",
+                    "#555555"
+                )
+                .attr(
+                    "stroke-width",
+                    2.3
+                )
+                .attr(
+                    "stroke-linecap",
+                    "round"
+                )
+                .attr(
+                    "stroke-dasharray",
+                    item.pattern
+                );
+
+            row
+                .append("span")
+                .text(
+                    item.label
+                );
+        }
+    );
 
     legend
         .append("p")
+        .attr(
+            "class",
+            "lab7-legend-title"
+        )
         .text(
-            "Node size → current transaction volume."
+            "Transaction amount (Link thickness)"
         );
 
+    const amountList =
+        legend
+            .append("div")
+            .attr(
+                "class",
+                "lab7-line-size-list"
+            );
+
+    const amountExamples = [
+        {
+            label: "< $10K",
+            width: 2.5
+        },
+        {
+            label: "$10K–$50K",
+            width: 4
+        },
+        {
+            label: "$50K–$100K",
+            width: 6
+        },
+        {
+            label: "> $100K",
+            width: 8
+        }
+    ];
+
+    amountExamples.forEach(
+        item => {
+            const row =
+                amountList
+                    .append("div")
+                    .attr(
+                        "class",
+                        "lab7-line-size-item"
+                    );
+
+            row
+                .append("svg")
+                .attr(
+                    "width",
+                    105
+                )
+                .attr(
+                    "height",
+                    17
+                )
+                .attr(
+                    "viewBox",
+                    "0 0 105 17"
+                )
+                .append("line")
+                .attr(
+                    "x1",
+                    1
+                )
+                .attr(
+                    "y1",
+                    8.5
+                )
+                .attr(
+                    "x2",
+                    104
+                )
+                .attr(
+                    "y2",
+                    8.5
+                )
+                .attr(
+                    "stroke",
+                    "#555555"
+                )
+                .attr(
+                    "stroke-width",
+                    item.width
+                )
+                .attr(
+                    "stroke-linecap",
+                    "round"
+                );
+
+            row
+                .append("span")
+                .text(
+                    item.label
+                );
+        }
+    );
 
     legend
         .append("p")
+        .attr(
+            "class",
+            "lab7-legend-title"
+        )
         .text(
-            "Link width → transaction amount."
+            "Transaction count (Link opacity)"
         );
 
+    const opacityList =
+        legend
+            .append("div")
+            .attr(
+                "class",
+                "lab7-opacity-list"
+            );
+
+    const opacityExamples = [
+        {
+            label: "1–2 transactions",
+            opacity: 0.25
+        },
+        {
+            label: "3–5 transactions",
+            opacity: 0.45
+        },
+        {
+            label: "6–10 transactions",
+            opacity: 0.70
+        },
+        {
+            label: ">10 transactions",
+            opacity: 0.95
+        }
+    ];
+
+    opacityExamples.forEach(
+        item => {
+            const row =
+                opacityList
+                    .append("div")
+                    .attr(
+                        "class",
+                        "lab7-opacity-item"
+                    );
+
+            row
+                .append("svg")
+                .attr(
+                    "width",
+                    105
+                )
+                .attr(
+                    "height",
+                    17
+                )
+                .attr(
+                    "viewBox",
+                    "0 0 105 17"
+                )
+                .append("line")
+                .attr(
+                    "x1",
+                    1
+                )
+                .attr(
+                    "y1",
+                    8.5
+                )
+                .attr(
+                    "x2",
+                    104
+                )
+                .attr(
+                    "y2",
+                    8.5
+                )
+                .attr(
+                    "stroke",
+                    "#555555"
+                )
+                .attr(
+                    "stroke-width",
+                    5
+                )
+                .attr(
+                    "stroke-linecap",
+                    "round"
+                )
+                .attr(
+                    "opacity",
+                    item.opacity
+                );
+
+            row
+                .append("span")
+                .text(
+                    item.label
+                );
+        }
+    );
 
     legend
         .append("p")
-        .text(
-            "Link opacity → transaction count."
-        );
-
-
-    legend
-        .append("p")
+        .attr(
+            "class",
+            "lab7-legend-note"
+        )
         .text(
             "Links are undirected and represent active commercial relationships."
         );
 }
 
-
-// Load data
-
 Promise.all([
-
     d3.csv(
         "../data/lab7_assignment_companies.csv",
         d => ({
@@ -1433,7 +1897,9 @@ Promise.all([
             date:
                 d3.timeParse(
                     "%Y-%m-%d"
-                )(d.date),
+                )(
+                    d.date
+                ),
 
             day:
                 +d.day,
@@ -1454,12 +1920,9 @@ Promise.all([
                 +d.transaction_count
         })
     )
-
 ])
-
 .then(
     ([companyData, transactionData]) => {
-
         companies =
             companyData;
 
@@ -1479,24 +1942,25 @@ Promise.all([
                     )
             );
 
-
-        const sectors = [
-            ...new Set(
-                companies.map(
-                    d => d.sector
+        const sectors =
+            [
+                ...new Set(
+                    companies.map(
+                        d =>
+                            d.sector
+                    )
                 )
-            )
-        ];
+            ];
 
-
-        const regions = [
-            ...new Set(
-                companies.map(
-                    d => d.region
+        const regions =
+            [
+                ...new Set(
+                    companies.map(
+                        d =>
+                            d.region
+                    )
                 )
-            )
-        ];
-
+            ];
 
         sectorColors.domain(
             sectors
@@ -1506,12 +1970,8 @@ Promise.all([
             regions
         );
 
-
-        // Initial node positions
-
         companies.forEach(
             (d, i) => {
-
                 const angle =
                     (
                         i /
@@ -1520,7 +1980,8 @@ Promise.all([
                     Math.PI *
                     2;
 
-                const radius = 250;
+                const radius =
+                    255;
 
                 d.x =
                     width / 2 +
@@ -1536,73 +1997,76 @@ Promise.all([
             }
         );
 
+        const availableDates =
+            getAvailableDates();
 
-        // Date picker limits
+        const totalDays =
+            availableDates.length;
 
-        const firstDate =
-            d3.min(
-                transactions,
-                d => d.date
+        d3.select(
+            "#time-slider"
+        )
+            .attr(
+                "min",
+                1
+            )
+            .attr(
+                "max",
+                totalDays
+            )
+            .attr(
+                "value",
+                1
+            )
+            .attr(
+                "step",
+                1
             );
 
-        const lastDate =
-            d3.max(
-                transactions,
-                d => d.date
-            );
-
-
-        if (firstDate) {
-
-            d3.select("#date-picker")
+        if (
+            availableDates.length
+        ) {
+            d3.select(
+                "#date-picker"
+            )
                 .attr(
                     "min",
-                    d3.timeFormat(
-                        "%Y-%m-%d"
-                    )(firstDate)
-                );
-        }
-
-
-        if (lastDate) {
-
-            d3.select("#date-picker")
+                    availableDates[0]
+                )
                 .attr(
                     "max",
-                    d3.timeFormat(
-                        "%Y-%m-%d"
-                    )(lastDate)
+                    availableDates[
+                        availableDates.length - 1
+                    ]
                 );
         }
-
 
         createLegend();
 
         showDay(1);
     }
 )
-
 .catch(
     error => {
-
         console.error(
             "Error loading Lab 7 data:",
             error
         );
 
-        d3.select("#visualization")
-            .html(`
+        d3.select(
+            "#visualization"
+        )
+            .html(
+                `
                 <div class="error-message">
                     Unable to load the Lab 7 data.
                     <br>
                     ${error.message}
                 </div>
-            `);
+                `
+            );
     }
 );
-
-
-// Temporal controls
 
 d3.select("#play")
     .on(
@@ -1610,13 +2074,11 @@ d3.select("#play")
         play
     );
 
-
 d3.select("#pause")
     .on(
         "click",
         pause
     );
-
 
 d3.select("#reset")
     .on(
@@ -1624,12 +2086,10 @@ d3.select("#reset")
         reset
     );
 
-
 d3.select("#time-slider")
     .on(
         "input",
         function() {
-
             pause();
 
             showDay(
@@ -1638,12 +2098,10 @@ d3.select("#time-slider")
         }
     );
 
-
 d3.select("#date-picker")
     .on(
         "change",
         function() {
-
             const selectedDay =
                 getDayForDate(
                     this.value
@@ -1652,7 +2110,6 @@ d3.select("#date-picker")
             if (
                 selectedDay !== null
             ) {
-
                 pause();
 
                 showDay(
