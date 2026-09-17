@@ -2,21 +2,428 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>STATS 401 - Lab 7</title>
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0">
 
-    <link rel="stylesheet" href="../css/style.css">
+    <title>
+        STATS 401 — Lab 7
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="../css/style.css">
+        
+
 </head>
 
 <body>
 
-    <h1>STATS 401 - Lab 7</h1>
+    <h1>
+        STATS 401: Data Acquisition and Visualization
+    </h1>
 
-    <p>Lab 7 will be added here.</p>
+    <nav
+        id="lab-nav"
+        class="lab-nav">
+    </nav>
 
-    <a href="../index.html">Back to Home</a>
+
+    <main>
+
+        <section id="dataset-description">
+
+            <h2>
+                Lab 7: Temporal Network Visualization
+            </h2>
+
+            <p>
+                This visualization shows how commercial transactions
+                among companies evolve over 60 days. Companies are
+                represented as nodes, while commercial relationships
+                are represented as links. The network changes over
+                time as relationships appear, disappear, and change
+                in transaction activity.
+            </p>
+
+            <p>
+                The datasets are fabricated for visualization practice
+                and do not represent real companies or transactions.
+            </p>
+
+        </section>
+
+
+        <section id="data-source">
+
+            <h2>
+                Data Structure
+            </h2>
+
+            <div class="visualization-note">
+
+                <strong>
+                    Company data:
+                </strong>
+
+                Company ID, company name, sector, and region.
+
+                <br><br>
+
+                <strong>
+                    Transaction data:
+                </strong>
+
+                Date, day, source company, target company,
+                transaction amount, transaction type, and
+                transaction count.
+
+                <br><br>
+
+                <strong>
+                    Network structure:
+                </strong>
+
+                Companies are represented as nodes and commercial
+                transactions are represented as undirected links
+                between companies.
+
+            </div>
+
+        </section>
+
+
+        <section id="visualization-section">
+
+            <h2>
+                Animated Commercial Network
+            </h2>
+
+            <div class="visualization-note">
+
+                The network displays the commercial relationships
+                active on the selected day. Company nodes remain
+                persistent across time to help preserve the mental
+                map, while links enter and exit as relationships
+                change.
+
+            </div>
+
+
+            <h3 class="design-subheading">
+                Temporal Controls
+            </h3>
+
+
+            <div class="lab7-controls">
+
+                <div class="lab7-buttons">
+
+                    <button
+                        id="play"
+                        type="button">
+                        Play
+                    </button>
+
+                    <button
+                        id="pause"
+                        type="button">
+                        Pause
+                    </button>
+
+                    <button
+                        id="reset"
+                        type="button">
+                        Reset
+                    </button>
+
+                </div>
+
+
+                <div class="lab7-slider-row">
+
+                    <label for="time-slider">
+                        Time:
+                    </label>
+
+                    <input
+                        id="time-slider"
+                        type="range"
+                        min="1"
+                        max="60"
+                        value="1"
+                        step="1">
+
+                </div>
+
+
+                <div class="lab7-date-row">
+
+                    <label for="date-picker">
+                        Select date:
+                    </label>
+
+                    <input
+                        id="date-picker"
+                        type="date">
+
+                </div>
+
+
+                <div
+                    id="current-day"
+                    class="current-day">
+                    Day 1
+                </div>
+
+            </div>
+
+
+            <div class="lab7-network-layout">
+
+                <aside class="lab7-legend">
+
+                    <h3>
+                        Encoding Legend
+                    </h3>
+
+                    <div id="legend">
+                    </div>
+
+                </aside>
+
+                <div class="lab7-network">
+
+                    <div id="visualization">
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <h3 class="design-subheading">
+                Interaction
+            </h3>
+
+            <div class="visualization-note">
+
+                <strong>
+                    Play:
+                </strong>
+                Automatically advances through the 60 days.
+
+                <br><br>
+
+                <strong>
+                    Pause:
+                </strong>
+                Stops the animation so users can inspect
+                the current network state.
+
+                <br><br>
+
+                <strong>
+                    Reset:
+                </strong>
+                Returns the visualization to Day 1.
+
+                <br><br>
+
+                <strong>
+                    Time slider:
+                </strong>
+                Allows users to manually inspect any of the
+                60 days.
+
+                <br><br>
+
+                <strong>
+                    Date selector:
+                </strong>
+                Allows users to select a specific date directly.
+                The selected date is synchronized with the
+                time slider.
+
+                <br><br>
+
+                <strong>
+                    Hover:
+                </strong>
+                Hover over a company to inspect its sector,
+                region, and current transaction volume.
+                Hover over a link to inspect transaction
+                details.
+
+            </div>
+
+        </section>
+
+
+        <section id="analysis">
+
+            <h2>
+                Design Description
+            </h2>
+
+            <p>
+                <strong>
+                    1. Visual channels.
+                </strong>
+                Node <strong>color</strong> represents company
+                sector. Node <strong>shape</strong> represents
+                geographic region. Node <strong>size</strong>
+                represents current transaction volume. Link
+                <strong>width</strong> represents transaction
+                amount, while link <strong>opacity</strong>
+                represents transaction count.
+            </p>
+
+            <p>
+                <strong>
+                    2. Temporal encoding.
+                </strong>
+                Time is represented through animation, the
+                interactive time slider, and the date selector.
+                As the selected day changes, active commercial
+                relationships are updated. New relationships
+                fade into the network and inactive relationships
+                fade out.
+            </p>
+
+            <p>
+                <strong>
+                    3. Mental map preservation.
+                </strong>
+                The same company nodes are maintained throughout
+                the animation instead of recreating the entire
+                network for every day. The force simulation is
+                gently restarted when links change. This helps
+                users follow companies while the network evolves.
+            </p>
+
+        </section>
+
+
+        <section id="temporal-analysis">
+
+            <h2>
+                Temporal Network Questions
+            </h2>
+
+            <p>
+                <strong>
+                    1. How does overall network connectivity change
+                    across the 60 days?
+                </strong>
+            </p>
+
+            <p>
+                The number and arrangement of active links can be
+                compared by moving through the 60 days with the
+                animation, time slider, or date selector.
+            </p>
+
+
+            <p>
+                <strong>
+                    2. Which companies become more central or
+                    commercially active over time?
+                </strong>
+            </p>
+
+            <p>
+                Node size represents current transaction volume.
+                Changes in node size reveal changes in commercial
+                activity.
+            </p>
+
+
+            <p>
+                <strong>
+                    3. Are there periods when the network consists
+                    of relatively separate clusters?
+                </strong>
+            </p>
+
+            <p>
+                Separate clusters can be identified when groups
+                of companies have internal connections but few
+                or no links connecting them to other groups.
+            </p>
+
+
+            <p>
+                <strong>
+                    4. Which commercial relationships appear,
+                    disappear, or become stronger over time?
+                </strong>
+            </p>
+
+            <p>
+                New relationships enter the network through
+                fade-in transitions, while inactive relationships
+                fade out. Changes in link width and opacity
+                indicate changes in transaction amount and
+                transaction count.
+            </p>
+
+
+            <p>
+                <strong>
+                    5. Does the network become more or less
+                    cross-regional over time?
+                </strong>
+            </p>
+
+            <p>
+                Region is encoded using node shape, allowing
+                users to examine connections between companies
+                from different regions.
+            </p>
+
+        </section>
+
+
+        <section id="dataset-note">
+
+            <h2>
+                Dataset Note
+            </h2>
+
+            <div class="visualization-note">
+
+                The company and transaction datasets are fabricated
+                for visualization practice. They do not represent
+                real companies, transactions, or commercial activity.
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <div
+        id="tooltip"
+        class="tooltip">
+    </div>
+
+
+    <script
+        src="https://d3js.org/d3.v7.min.js">
+    </script>
+
+    <script
+        src="../js/main.js">
+    </script>
+
+    <script
+        src="lab7.js">
+    </script>
 
 </body>
 
