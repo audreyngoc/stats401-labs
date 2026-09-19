@@ -28,6 +28,7 @@ const svg =
 let companies = [];
 let transactions = [];
 let currentDay = 1;
+let currentDayTransactions = [];
 let timer = null;
 
 const linksGroup =
@@ -70,11 +71,11 @@ const dateLabel =
         )
         .attr(
             "x",
-            width - 30
+            width - 25
         )
         .attr(
             "y",
-            34
+            -18
         )
         .attr(
             "text-anchor",
@@ -559,7 +560,7 @@ function updateSummary(
         )
         .attr(
             "y",
-            18
+            -25
         )
         .text(
             `Active links: ${currentLinks.length}`
@@ -573,7 +574,7 @@ function updateSummary(
         )
         .attr(
             "y",
-            36
+            -50
         )
         .text(
             `Total transaction value: $${d3.format(",.0f")(totalValue)}`
@@ -909,7 +910,7 @@ function updateNetwork(
                 const volume =
                     companyVolume(
                         d.id,
-                        currentTransactions
+                        currentDayTransactions
                     );
 
                 showTooltip(
@@ -1216,6 +1217,9 @@ function showDay(day) {
                 dateString
         );
 
+    currentDayTransactions =
+        currentTransactions;
+
     updateDateControls();
 
     updateNetwork(
@@ -1223,10 +1227,22 @@ function showDay(day) {
     );
 }
 
+function updateButtonState(activeButton) {
+    d3.selectAll(".lab7-buttons button")
+        .classed("active", false);
+
+    if (activeButton) {
+        d3.select(activeButton)
+            .classed("active", true);
+    }
+}
+
 function play() {
     if (timer !== null) {
         return;
     }
+
+    updateButtonState("#play");
 
     const totalDays =
         getAvailableDates().length;
@@ -1263,11 +1279,15 @@ function pause() {
         timer.stop();
         timer = null;
     }
+
+    updateButtonState("#pause");
+
 }
 
 function reset() {
     pause();
     showDay(1);
+    updateButtonState("#reset");
 }
 
 function formatLegendValue(

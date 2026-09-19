@@ -114,7 +114,7 @@
 
                 <aside class="lab7-legend-panel">
 
-                    <h2>Encoding Legend</h2>
+                    <h3>Encoding Legend</h3>
 
                     <p class="legend-description">
                         How visual properties represent data
@@ -128,12 +128,10 @@
 
                 <div class="lab7-right-column">
 
-                    <!-- THE ORIGINAL WORKING CONTROLS GO HERE -->
-
                     <div class="lab7-controls">
 
                         <div class="lab7-buttons">
-
+                            <h3>Temporal Controls</h3>
                             <button
                                 id="play"
                                 type="button">
@@ -265,9 +263,16 @@
             </p>
 
             <p>
-                The number and arrangement of active links can be
-                compared by moving through the 60 days with the
-                animation, time slider, or date selector.
+                Overall connectivity fluctuates across the 60 days,
+                but the network becomes noticeably denser toward the
+                later period. Earlier dates generally contain fewer
+                active relationships and more isolated companies,
+                while later dates show broader participation.
+                For example, on <strong>Day 3</strong>, there are
+                <strong>3 active links and 6 active companies</strong>,
+                compared with <strong>10 active links and 12 active
+                companies on Day 57</strong>, showing substantially
+                greater connectivity later in the period.
             </p>
 
 
@@ -279,9 +284,12 @@
             </p>
 
             <p>
-                Node size represents current transaction volume.
-                Changes in node size reveal changes in commercial
-                activity.
+                <strong>Fusion Electronics, Cedar Retail, Harbor Shipping and Ion Systems</strong>
+                become particularly prominent. Their large node sizes
+                indicate high transaction volumes, while their multiple
+                connections indicate important positions in the network. All of them
+                become very active commercially while Fusion Electronics and Cedar Retail
+                move to the central area of the chart over time.
             </p>
 
 
@@ -293,9 +301,21 @@
             </p>
 
             <p>
-                Separate clusters can be identified when groups
-                of companies have internal connections but few
-                or no links connecting them to other groups.
+                Answer: Yes. The network is relatively fragmented during 
+                some earlier periods, with several small groups and isolated 
+                companies. I also observed a recurring pattern in which a busy 
+                transaction day with many high-value relationships is sometimes
+                followed by a less connected day, when the network breaks into
+                smaller clusters. For example, on Day 10, the network has 8 
+                active links connecting 11 companies, whereas on Day 11, only 3
+                active links connecting 6 companies remain, resulting in several
+                smaller and more separated clusters. This suggests that periods 
+                of intensive commercial activity can be followed by short-term 
+                fragmentation in the network. However, this pattern becomes less
+                common around Day 40 and afterward. In the later period, 
+                relationships more often reconnect shortly after a highly active
+                transaction day, suggesting greater continuity in the network 
+                structure.
             </p>
 
 
@@ -307,11 +327,15 @@
             </p>
 
             <p>
-                New relationships enter the network through
-                fade-in transitions, while inactive relationships
-                fade out. Changes in link width and opacity
-                indicate changes in transaction amount and
-                transaction count.
+                Commercial relationships change substantially throughout
+                the period. Some disappear while new relationships emerge,
+                and link width and opacity show changes in transaction
+                amount and transaction count. For example, the
+                <strong>Harbor Shipping–Juniper Stores</strong> relationship
+                is visible on <strong>Day 9</strong> but is absent in later
+                snapshots. By <strong>Day 59</strong>, new relationships
+                such as <strong>Ion Systems–Apex Textiles</strong> and
+                <strong>Fusion Electronics–Ion Systems</strong> are visible.
             </p>
 
 
@@ -323,9 +347,17 @@
             </p>
 
             <p>
-                Region is encoded using node shape, allowing
-                users to examine connections between companies
-                from different regions.
+                Cross-regional connectivity becomes more prominent toward
+                the later period. Connections between differently shaped
+                nodes indicate transactions between companies from different
+                geographic regions. For example, on <strong>Day 9</strong>,
+                <strong>Granite Wholesale (Europe)</strong> connects with
+                <strong>Keystone Materials (Asia)</strong>. By
+                <strong>Day 59</strong>, multiple cross-regional relationships
+                are visible, including <strong>Ion Systems (North America)–
+                Apex Textiles (Asia)</strong> and
+                <strong>Fusion Electronics (Asia)–Ion Systems
+                (North America)</strong>.
             </p>
 
         </section>
