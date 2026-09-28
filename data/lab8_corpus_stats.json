@@ -1,0 +1,23 @@
+{
+  "raw_count": 1119,
+  "clean_count": 1119,
+  "average_word_count": 91.1,
+  "section_count": 49,
+  "chapter_count": 12,
+  "subsection_count": 96,
+  "page_count": 383,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "umap": {
+    "n_components": 2,
+    "n_neighbors": 15,
+    "min_dist": 0.15,
+    "metric": "cosine",
+    "random_state": 401
+  },
+  "clustering": {
+    "method": "KMeans",
+    "n_clusters": 8,
+    "random_state": 401,
+    "n_init": "auto"
+  }
+}

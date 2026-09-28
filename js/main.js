@@ -18,6 +18,7 @@ if (labNav) {
         { name: "Lab 6", url: `${prefix}/lab6/index.html` },
         { name: "Lab 7", url: `${prefix}/lab7/index.html` },
         { name: "Lab 8", url: `${prefix}/lab8/index.html` },
+        { name: "Visualization Critique & Redesign", url: `${prefix}/individual_project/index.html` }, 
         { name: "Lab 9", url: `${prefix}/lab9/index.html` },
         { name: "Lab 10", url: `${prefix}/lab10/index.html` }
     ];

@@ -1,0 +1,2104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        COVID-19 Mortality | Visualization Critique & Redesign
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="style.css"
+    >
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+</head>
+
+
+<body>
+
+    <header class="site-header">
+
+        <div class="header-inner">
+
+            <div class="eyebrow">
+                STATS 401 · INDIVIDUAL PROJECT · LY MINH NGOC TRAN (NLT19)
+            </div>
+
+            <h1>
+                Reframing COVID-19 Mortality
+            </h1>
+
+            <p class="header-subtitle">
+                A critique and redesign of a multi-country
+                COVID-19 mortality visualization
+            </p>
+
+            <div class="header-meta">
+
+                <span>
+                    COVID-19 mortality
+                </span>
+
+                <span>
+                    7 countries
+                </span>
+
+                <span>
+                    Jan 23 – Apr 20, 2020
+                </span>
+
+            </div>
+
+        </div>
+
+    </header>
+
+
+    <main>
+        
+        <nav id="lab-nav" class="lab-nav"></nav>
+
+        <!-- 01 · CONTEXT -->
+
+        <section class="intro section">
+
+            <div class="content-narrow">
+
+                <div class="section-label">
+                    01 · CONTEXT
+                </div>
+
+                <h2>
+                    Visualization Critique and Redesign
+                </h2>
+
+                <p class="lead">
+                    This project critically evaluates an existing visualization of
+                    COVID-19 mortality across seven countries and redesigns
+                    it using D3.js. The analysis focuses on how visual
+                    encodings, layout, scales, annotation, and interaction
+                    support or hinder the visualization's intended message
+                    and comparison tasks.
+                </p>
+
+                <p>
+                    The original visualization combines mortality level and
+                    rate of change in a shared two-dimensional phase portrait.
+                    This is a compact and expressive way to show two related
+                    quantitative measures, but it makes temporal order less
+                    explicit and causes trajectories, labels, and annotations
+                    to compete for visual attention. As a result, broad
+                    patterns are visible, but detailed country and date
+                    comparisons require substantial visual decoding.
+                </p>
+
+                <p>
+                    The redesign preserves the original's two quantitative
+                    measures and shared-scale comparison while reorganizing
+                    the display around the tasks identified above. Countries
+                    are separated into small multiples, time is encoded
+                    directly on the x-axis, mortality level and rate of change
+                    receive separate aligned tracks, and interaction provides
+                    exact values without permanently increasing visual clutter.
+                </p>
+
+
+                <div class="principle-grid">
+
+
+                    <div class="principle-card">
+
+                        <span class="card-number">
+                            01
+                        </span>
+
+                        <h3>
+                            Preserve useful information
+                        </h3>
+
+                        <p>
+                            The redesign retains the original mortality level,
+                            rate of change, cross-country comparison, and
+                            shared quantitative scales so the redesign improves
+                            readability without discarding the information
+                            that made the original expressive.
+                        </p>
+
+                    </div>
+
+
+                    <div class="principle-card">
+
+                        <span class="card-number">
+                            02
+                        </span>
+
+                        <h3>
+                            Improve comparison
+                        </h3>
+
+                        <p>
+                            Small multiples separate trajectories spatially, while
+                            explicit time axes make sequence, timing, and
+                            same-date comparisons easier to read.
+                        </p>
+
+                    </div>
+
+
+                    <div class="principle-card">
+
+                        <span class="card-number">
+                            03
+                        </span>
+
+                        <h3>
+                            Support detailed reading
+                        </h3>
+
+                        <p>
+                            Tooltips, date selection, highlighting, filtering,
+                            and animation support detailed inspection on demand,
+                            keeping exact values and secondary information from
+                            competing with the primary marks.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- 02 · ORIGINAL -->
+
+        <section class="original section">
+
+            <div class="content-wide">
+
+                <div class="section-heading">
+
+                    <div>
+
+                        <div class="section-label">
+                            02 · ORIGINAL
+                        </div>
+
+                        <h2>
+                            The original visualization
+                        </h2>
+
+                    </div>
+
+                    <a
+                        class="source-link"
+                        href="https://www.dannydorling.org/?p=7758"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                    >
+                        View original source ↗
+                    </a>
+
+                </div>
+
+
+                <div class="original-layout">
+
+
+                    <!-- ORIGINAL VISUALIZATION -->
+
+                    <figure class="original-figure">
+
+                        <img
+                            src="images/original_visualization.png"
+                            alt="Original COVID-19 mortality phase portrait"
+                        >
+
+                        <figcaption>
+                            Mortality in seven countries attributed to
+                            COVID-19, January 23 to April 20, 2020.
+                            Danny Dorling, illustration by Kirsten McClure.
+                        </figcaption>
+
+                    </figure>
+
+
+                    <!-- DATA & PURPOSE -->
+
+                    <aside class="context-card">
+
+                        <div class="mini-label">
+                            DATA & PURPOSE
+                        </div>
+
+                        <h3>
+                            What the chart is showing
+                        </h3>
+
+                        <p>
+                            The visualization shows COVID-19 mortality
+                            trajectories for China, France, Germany, Italy,
+                            Spain, the United Kingdom, and the United States
+                            from January 23 to April 20, 2020.
+                        </p>
+
+                        <p>
+                            The vertical position represents the smoothed average
+                            number of deaths per day, while the horizontal
+                            position represents the rate of change in average
+                            deaths. Time is encoded indirectly: dates progress
+                            sequentially along each country's trajectory rather
+                            than along a conventional time axis. This makes the
+                            chart useful for seeing mortality level and change
+                            together, but less direct for identifying when a
+                            particular change occurred.
+                        </p>
+
+
+                        <div class="source-block">
+
+                            <span>
+                                Data source
+                            </span>
+
+                            <a
+                                href="https://ourworldindata.org/covid-cases"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Our World in Data · COVID-19 Cases & Deaths
+                            </a>
+
+                        </div>
+
+
+                        <div class="source-block">
+
+                            <span>
+                                Data used in this project
+                            </span>
+
+                            <p>
+                                From the <strong>Cases & deaths</strong>
+                                dataset, this project uses the
+                                <strong>date</strong>,
+                                <strong>country/location</strong>, and
+                                <strong>new deaths</strong> fields for the
+                                seven selected countries. The raw daily death
+                                values are used to calculate the smoothed
+                                average deaths per day and the rate of change
+                                used in the visualization. The
+                                <strong>new-cases</strong> variable is not
+                                used in this project.
+                            </p>
+
+                        </div>
+
+
+                        <div class="source-block">
+
+                            <span>
+                                Original visualization
+                            </span>
+
+                            <a
+                                href="https://www.dannydorling.org/?p=7758"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                DannyDorling.org
+                            </a>
+
+                        </div>
+
+                    </aside>
+
+
+                    <!-- ANALYZE THE ORIGINAL VISUALIZATION -->
+
+                    <div class="analysis-block">
+
+                        <div class="section-label">
+                            ANALYZE THE ORIGINAL VISUALIZATION
+                        </div>
+
+                        <h2>
+                            Message, audience, and tasks
+                        </h2>
+
+
+                        <div class="analysis-grid">
+
+
+                            <article class="analysis-card">
+
+                                <span class="analysis-label">
+                                    INTENDED MESSAGE
+                                </span>
+
+                                <h3>
+                                    What should viewers notice?
+                                </h3>
+
+                                <p>
+                                    The visualization is designed to communicate
+                                    how COVID-19 mortality evolved differently
+                                    across countries by combining mortality
+                                    level with the direction and rate of change.
+                                    Viewers should notice where mortality was
+                                    high or low, whether mortality was
+                                    increasing or decreasing, and how the
+                                    trajectories differed in magnitude and timing
+                                    across countries.
+                                </p>
+
+                            </article>
+
+
+                            <article class="analysis-card">
+
+                                <span class="analysis-label">
+                                    AUDIENCE
+                                </span>
+
+                                <h3>
+                                    Who is it for?
+                                </h3>
+
+                                <p>
+                                    The primary audience is a general audience
+                                    seeking a cross-country view of the early
+                                    COVID-19 mortality trajectory. A secondary
+                                    audience is readers interested in interpreting
+                                    pandemic patterns across countries without
+                                    needing specialized statistical knowledge.
+                                    Because the chart uses an unfamiliar
+                                    phase-portrait design, the audience benefits
+                                    from clear labels and guidance for decoding
+                                    the axes.
+                                </p>
+
+                            </article>
+
+
+                            <article class="analysis-card">
+
+                                <span class="analysis-label">
+                                    TASKS
+                                </span>
+
+                                <h3>
+                                    What should viewers be able to do?
+                                </h3>
+
+                                <p>
+                                    Viewers should be able to (1) follow an
+                                    individual country's mortality trajectory,
+                                    (2) compare mortality levels across
+                                    countries, (3) identify periods when
+                                    mortality is increasing or decreasing,
+                                    (4) determine when major changes occur,
+                                    and (5) compare the magnitude and timing
+                                    of those changes between countries.
+                                </p>
+
+                            </article>
+
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- 03 · CRITIQUE -->
+
+        <section class="section critique-section" id="critique">
+
+            <div class="section-heading">
+
+                <span class="section-number">
+                    03
+                </span>
+
+                <div>
+
+                    <p class="eyebrow">
+                        Critical analysis
+                    </p>
+
+                    <h2>
+                        What works and what gets in the way
+                    </h2>
+
+                    <p class="section-intro">
+                        The original visualization is expressive and
+                        information-rich, but its visual encodings make
+                        precise comparison difficult.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="critique-grid">
+
+
+                <article class="critique-card strength-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Strength · Encoding
+                            </p>
+
+                            <h3>
+                                Expressive visual encoding
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        01
+                    </span>
+
+                    <p>
+                        The chart uses <strong>position</strong> to encode two
+                        quantitative variables—average deaths per day and
+                        rate of change—within one coordinate system. This is
+                        expressive because viewers can see the relationship
+                        between mortality level and its change without
+                        switching between separate charts. The shared
+                        coordinate system also keeps the two measures
+                        visually related.
+                    </p>
+
+                    <div class="critique-principle">
+                        Visual encoding · Expressiveness
+                    </div>
+
+                </article>
+
+
+                <article class="critique-card strength-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Strength · Grouping
+                            </p>
+
+                            <h3>
+                                Color supports grouping
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        02
+                    </span>
+
+                    <p>
+                        A distinct color is assigned to each country, creating
+                        a categorical <strong>grouping</strong> that helps
+                        viewers identify the seven trajectories. This supports
+                        <strong>discriminability</strong> and allows a country
+                        to be followed across the shared coordinate system,
+                        especially when trajectories are sufficiently separated.
+                    </p>
+
+                    <div class="critique-principle">
+                        Color channel · Grouping · Discriminability
+                    </div>
+
+                </article>
+
+
+                <article class="critique-card strength-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            ✓
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Strength · Pattern
+                            </p>
+
+                            <h3>
+                                Strong overall pattern detection
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        03
+                    </span>
+
+                    <p>
+                        The trajectories make large-scale differences in
+                        mortality magnitude and movement visually salient.
+                        Major differences in the overall shape and extent of
+                        country trajectories can <strong>pop out</strong>
+                        without requiring viewers to inspect every individual
+                        value. This supports a quick overview before detailed
+                        analysis.
+                    </p>
+
+                    <div class="critique-principle">
+                        Pop-out · Effectiveness
+                    </div>
+
+                </article>
+
+
+                <article class="critique-card weakness-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Weakness · Overplotting
+                            </p>
+
+                            <h3>
+                                Too many trajectories reduce readability
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        01
+                    </span>
+
+                    <p>
+                        <strong>Problem:</strong> Multiple country trajectories
+                        overlap and cross in the same coordinate space.
+                        Although color provides categorical separation, the
+                        paths have limited <strong>separability</strong>
+                        where they cluster.
+                        <strong>Why it matters:</strong> A viewer may lose
+                        track of which path belongs to which country, making
+                        individual trajectories harder to compare accurately.
+                        <strong>Improvement:</strong> Use small multiples so
+                        each country has dedicated visual space while retaining
+                        identical scales for comparison.
+                    </p>
+
+                    <div class="critique-principle">
+                        Overplotting · Separability · Readability
+                    </div>
+
+                </article>
+
+
+                <article class="critique-card weakness-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Weakness · Accuracy
+                            </p>
+
+                            <h3>
+                                Position is difficult to compare precisely
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        02
+                    </span>
+
+                    <p>
+                        <strong>Problem:</strong> The phase-portrait position
+                        encodes two variables, but time is not a spatial axis.
+                        Viewers must infer date by tracing a curved path.
+                        <strong>Why it matters:</strong> This makes precise
+                        temporal questions—such as when a change occurred or
+                        what two countries did on the same date—harder to
+                        answer.
+                        <strong>Improvement:</strong> Use a direct time-series
+                        x-axis so date is represented by position and can be
+                        compared consistently.
+                    </p>
+
+                    <div class="critique-principle">
+                        Position · Accuracy · Temporal comparison
+                    </div>
+
+                </article>
+
+
+                <article class="critique-card weakness-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Weakness · Hierarchy
+                            </p>
+
+                            <h3>
+                                Annotations compete with the data
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        03
+                    </span>
+
+                    <p>
+                        <strong>Problem:</strong> Numerous date labels and
+                        policy annotations add visual elements around the
+                        trajectories.
+                        <strong>Why it matters:</strong> They can compete with
+                        the primary data marks and weaken
+                        <strong>visual hierarchy</strong>, making it harder
+                        to distinguish the main analytical message from
+                        contextual detail.
+                        <strong>Improvement:</strong> Retain essential context
+                        but move exact values and secondary detail into
+                        interaction.
+                    </p>
+
+                    <div class="critique-principle">
+                        Visual hierarchy · Visual economy
+                    </div>
+
+                </article>
+
+
+                <article class="critique-card weakness-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Weakness · Color
+                            </p>
+
+                            <h3>
+                                Color is overloaded
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        04
+                    </span>
+
+                    <p>
+                        <strong>Problem:</strong> Seven categorical colors
+                        must be distinguished while trajectories overlap.
+                        <strong>Why it matters:</strong> Color is less
+                        effective when nearby paths are dense, so country
+                        identity can require repeated legend lookup.
+                        <strong>Improvement:</strong> Retain color as a
+                        secondary country identifier, but combine it with
+                        separated panels, direct labels, and reduced visual
+                        competition.
+                    </p>
+
+                    <div class="critique-principle">
+                        Color channel · Discriminability · Effectiveness
+                    </div>
+
+                </article>
+
+
+                <article class="critique-card weakness-card">
+
+                    <div class="critique-header">
+
+                        <div class="critique-icon">
+                            !
+                        </div>
+
+                        <div>
+
+                            <p class="critique-label">
+                                Weakness · Efficiency
+                            </p>
+
+                            <h3>
+                                The encoding is expressive but not efficient
+                            </h3>
+
+                        </div>
+
+                    </div>
+
+                    <span class="critique-number">
+                        05
+                    </span>
+
+                    <p>
+                        <strong>Problem:</strong> The original combines
+                        several encodings and contextual annotations in one
+                        composition.
+                        <strong>Why it matters:</strong> Viewers must decode
+                        mortality level, rate of change, country identity,
+                        and temporal order together, increasing cognitive
+                        and visual decoding cost.
+                        <strong>Improvement:</strong> Separate the variables
+                        into synchronized views and use interaction for exact
+                        values and focused comparison.
+                    </p>
+
+                    <div class="critique-principle">
+                        Expressiveness · Effectiveness · Visual economy
+                    </div>
+
+                </article>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- 04 · REDESIGN -->
+
+        <section class="redesign section">
+
+            <div class="content-wide">
+
+
+                <div class="section-heading redesign-heading">
+
+                    <div>
+
+                        <div class="section-label">
+                            04 · REDESIGN
+                        </div>
+
+                        <h2>
+                            From Critique to Redesign
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <!-- LINK BACK TO CRITIQUE -->
+
+                <div class="redesign-rationale">
+
+                    <span class="section-label">
+                        WHAT WAS KEPT AND WHAT WAS IMPROVED
+                    </span>
+
+                    <p>
+                        The redesign preserves the original's strongest
+                        information encodings while directly targeting the
+                        problems identified in the critique. Each change below
+                        links a specific weakness to a concrete visual or
+                        interaction decision.
+                    </p>
+
+
+                    <div class="rationale-grid">
+
+
+                        <div class="rationale-card kept">
+
+                            <span>
+                                KEPT
+                            </span>
+
+                            <h4>
+                                Expressive quantitative information
+                            </h4>
+
+                            <p>
+                                From Section 03, the original's ability to
+                                communicate mortality level and rate of change
+                                was a strength. The redesign keeps both
+                                variables instead of removing information.
+                            </p>
+
+                        </div>
+
+
+                        <div class="rationale-card kept">
+
+                            <span>
+                                KEPT
+                            </span>
+
+                            <h4>
+                                Shared quantitative scales
+                            </h4>
+
+                            <p>
+                                The shared quantitative frame supports
+                                comparison in the original. The redesign
+                                preserves this principle by using identical
+                                mortality and rate-of-change scales across
+                                country panels, preventing misleading
+                                comparisons caused by independent axes.
+                            </p>
+
+                        </div>
+
+
+                        <div class="rationale-card improved">
+
+                            <span>
+                                IMPROVED
+                            </span>
+
+                            <h4>
+                                Overlapping trajectories
+                            </h4>
+
+                            <p>
+                                The Section 03 overplotting problem is addressed
+                                with small multiples, giving every country its
+                                own visual space and improving separability.
+                            </p>
+
+                        </div>
+
+
+                        <div class="rationale-card improved">
+
+                            <span>
+                                IMPROVED
+                            </span>
+
+                            <h4>
+                                Indirect temporal encoding
+                            </h4>
+
+                            <p>
+                                The original's indirect representation of time
+                                is replaced by a direct daily x-axis. This
+                                makes temporal sequence, duration, and same-day
+                                comparison explicit rather than requiring
+                                viewers to reconstruct dates from a path.
+                            </p>
+
+                        </div>
+
+
+                        <div class="rationale-card improved">
+
+                            <span>
+                                IMPROVED
+                            </span>
+
+                            <h4>
+                                Annotation and decoding cost
+                            </h4>
+
+                            <p>
+                                Permanent annotation is reduced so the data
+                                marks remain dominant. Tooltips, date selection,
+                                highlighting, filtering, and animation provide
+                                detail when the viewer requests it, reducing
+                                the default decoding burden.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="rationale-transition">
+
+                        <span class="section-label">
+                            FROM CRITIQUE TO DESIGN DECISIONS
+                        </span>
+
+                        <p>
+                            These observations translate directly into the
+                            redesign. The following features implement the
+                            critique as concrete choices while preserving the
+                            original's quantitative information and
+                            cross-country comparability.
+                        </p>
+
+                    </div>
+
+
+                    <div class="redesign-features">
+
+
+                        <div class="feature">
+
+                            <strong>
+                                7 small multiples
+                            </strong>
+
+                            <span>
+                                One country per panel
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                Daily time series
+                            </strong>
+
+                            <span>
+                                Every date from Jan 23 to Apr 20
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                2 synchronized tracks
+                            </strong>
+
+                            <span>
+                                Average deaths and rate of change
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                Identical scales
+                            </strong>
+
+                            <span>
+                                Direct comparison across countries
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                Explicit axes
+                            </strong>
+
+                            <span>
+                                Clear quantitative and temporal references
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                Shared date interaction
+                            </strong>
+
+                            <span>
+                                Compare countries at the same date
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                Interactive highlighting
+                            </strong>
+
+                            <span>
+                                Focus on a selected country
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                Tooltips
+                            </strong>
+
+                            <span>
+                                Retrieve exact values on demand
+                            </span>
+
+                        </div>
+
+
+                        <div class="feature">
+
+                            <strong>
+                                Minimal annotation
+                            </strong>
+
+                            <span>
+                                Keeps data marks visually dominant
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+                <p>
+                    Together, these design choices form the redesigned
+                    visualization shown below. The interactive view puts the
+                    critique-to-design decisions into practice.
+                </p>
+
+
+                <div class="chart-card">
+
+                    <div class="chart-header">
+
+                        <div>
+
+                            <span class="chart-kicker">
+                                DAILY MORTALITY
+                            </span>
+
+                            <h3>
+                                Average deaths and rate of change over time
+                            </h3>
+
+                            <p class="section-description">
+                                Each country is shown as a daily time series
+                                with two aligned tracks: average deaths per day
+                                and rate of change. Identical scales make values
+                                comparable across countries, while the direct
+                                date axis supports temporal reasoning.
+                            </p>
+
+                        </div>
+
+
+                        <div class="chart-controls">
+
+                            <div
+                                id="highlight-control"
+                                class="control"
+                            >
+
+                                <label for="country-select">
+                                    Highlight
+                                </label>
+
+                                <select id="country-select">
+
+                                    <option value="all">
+                                        All countries
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+
+                            <button
+                                id="global-toggle"
+                                class="chart-button"
+                                type="button"
+                            >
+                                Global comparison
+                            </button>
+
+
+                            <button
+                                id="play-button"
+                                class="chart-button"
+                                type="button"
+                            >
+                                Play
+                            </button>
+
+
+                            <label
+                                for="date-select"
+                                class="date-control"
+                            >
+
+                                <span>
+                                    Date
+                                </span>
+
+                                <input
+                                    id="date-select"
+                                    type="date"
+                                    aria-label="Select visualization date"
+                                >
+
+                            </label>
+
+
+                            <button
+                                id="reset-button"
+                                class="chart-button secondary"
+                                type="button"
+                            >
+                                Reset
+                            </button>
+
+                        </div>
+
+                    </div>
+
+
+                    <div
+                        id="comparison-controls"
+                        class="comparison-controls"
+                    >
+
+                        <div class="comparison-heading">
+
+                            <strong>
+                                Countries in comparison
+                            </strong>
+
+                            <button
+                                id="select-all-countries"
+                                type="button"
+                            >
+                                Select all
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="country-checkboxes"
+                            class="country-checkboxes"
+                        ></div>
+
+                    </div>
+
+
+                    <div
+                        id="visualization"
+                        aria-label="Interactive COVID-19 mortality visualization"
+                    ></div>
+
+
+                    <div class="chart-note">
+
+                        <strong>
+                            How to read:
+                        </strong>
+
+                        Each country has two aligned time-series tracks. The
+                        upper track shows average deaths per day. The lower
+                        track shows the rate of change in average deaths,
+                        measured in deaths/day². Hover over a line to inspect
+                        exact values for a date. Use Global comparison to
+                        compare selected countries on the same timeline. The
+                        date control supports direct navigation to a specific
+                        day, while Play reveals the timeline sequentially.
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- PART 5 · EXPLAIN YOUR DESIGN -->
+
+                <div class="design-explanation">
+
+                    <div class="section-label">
+                        HOW THE REDESIGN ADDRESSED THE CRITIQUE
+                    </div>
+
+                    <p class="design-intro">
+                        The redesign translates the critique into four major
+                        design decisions. Each decision identifies what
+                        changed, why the change was needed, which critique it
+                        addresses, and what becomes easier for the viewer as
+                        a result.
+                    </p>
+
+
+                    <div class="explanation-grid">
+
+
+                        <article class="explanation-card">
+
+                            <div class="explanation-top">
+
+                                <span class="explanation-number">
+                                    01
+                                </span>
+
+                                <span class="explanation-kicker">
+                                    OVERPLOTTING
+                                </span>
+
+                            </div>
+
+                            <h4>
+                                Separate countries into small multiples
+                            </h4>
+
+                            <div class="explanation-detail">
+
+                                <p>
+                                    <strong>What changed:</strong> Each
+                                    country receives its own small-multiple
+                                    panel instead of sharing the same
+                                    trajectory space.
+                                </p>
+
+                                <p>
+                                    <strong>Why:</strong> The original places
+                                    seven trajectories in one coordinate
+                                    system, creating overlap and crossings
+                                    that make country identity harder to
+                                    follow.
+                                </p>
+
+                                <p>
+                                    <strong>Problem addressed:</strong>
+                                    Reduced readability and separability.
+                                </p>
+
+                                <p>
+                                    <strong>Improvement:</strong> Dedicated
+                                    visual space improves separability and
+                                    tracing. Identical scales preserve direct
+                                    quantitative comparison, so the redesign
+                                    does not solve clutter by sacrificing
+                                    comparability.
+                                </p>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="explanation-card">
+
+                            <div class="explanation-top">
+
+                                <span class="explanation-number">
+                                    02
+                                </span>
+
+                                <span class="explanation-kicker">
+                                    TEMPORAL ENCODING
+                                </span>
+
+                            </div>
+
+                            <h4>
+                                Put time directly on the x-axis
+                            </h4>
+
+                            <div class="explanation-detail">
+
+                                <p>
+                                    <strong>What changed:</strong> Every date
+                                    from January 23 to April 20 is represented
+                                    along a direct time axis shared across
+                                    panels.
+                                </p>
+
+                                <p>
+                                    <strong>Why:</strong> The original encodes
+                                    time indirectly through movement along a
+                                    curved trajectory.
+                                </p>
+
+                                <p>
+                                    <strong>Problem addressed:</strong>
+                                    Difficult temporal comparison.
+                                </p>
+
+                                <p>
+                                    <strong>Improvement:</strong> Direct
+                                    temporal position makes it easier to
+                                    identify when changes occur, compare
+                                    duration and timing, and align countries
+                                    on the same date.
+                                </p>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="explanation-card">
+
+                            <div class="explanation-top">
+
+                                <span class="explanation-number">
+                                    03
+                                </span>
+
+                                <span class="explanation-kicker">
+                                    QUANTITATIVE ENCODING
+                                </span>
+
+                            </div>
+
+                            <h4>
+                                Separate mortality level and rate of change
+                            </h4>
+
+                            <div class="explanation-detail">
+
+                                <p>
+                                    <strong>What changed:</strong> Average
+                                    deaths and rate of change are displayed
+                                    in two synchronized tracks with explicit
+                                    quantitative axes.
+                                </p>
+
+                                <p>
+                                    <strong>Why:</strong> The original
+                                    requires viewers to decode two quantitative
+                                    dimensions from one position while also
+                                    inferring temporal order from the
+                                    trajectory.
+                                </p>
+
+                                <p>
+                                    <strong>Problem addressed:</strong>
+                                    High decoding cost and reduced readability.
+                                </p>
+
+                                <p>
+                                    <strong>Improvement:</strong> Each variable
+                                    receives its own quantitative axis, while
+                                    aligned dates preserve the relationship
+                                    between the measures over time.
+                                </p>
+
+                            </div>
+
+                        </article>
+
+
+                        <article class="explanation-card">
+
+                            <div class="explanation-top">
+
+                                <span class="explanation-number">
+                                    04
+                                </span>
+
+                                <span class="explanation-kicker">
+                                    INTERACTION
+                                </span>
+
+                            </div>
+
+                            <h4>
+                                Use interaction for detailed inspection
+                            </h4>
+
+                            <div class="explanation-detail">
+
+                                <p>
+                                    <strong>What changed:</strong> The
+                                    redesign adds tooltips, country
+                                    highlighting, filtering, date selection,
+                                    and temporal animation.
+                                </p>
+
+                                <p>
+                                    <strong>Why:</strong> Exact values and
+                                    secondary comparisons are useful for
+                                    exploration but do not need to compete
+                                    with the primary patterns in the default
+                                    view.
+                                </p>
+
+                                <p>
+                                    <strong>Problem addressed:</strong>
+                                    Annotation clutter and visual competition.
+                                </p>
+
+                                <p>
+                                    <strong>Improvement:</strong> Exact
+                                    information is available on demand,
+                                    reducing annotation clutter while
+                                    preserving detailed analytical access.
+                                </p>
+
+                            </div>
+
+                        </article>
+
+
+                    </div>
+
+
+                    <div class="comparison-summary">
+
+                        <div class="summary-heading">
+
+                            <span class="section-label">
+                                ORIGINAL VS. REDESIGNED
+                            </span>
+
+                            <h4>
+                                Preserving strengths while making comparison easier
+                            </h4>
+
+                        </div>
+
+
+                        <p>
+                            The original is effective at presenting mortality
+                            level and rate of change together, and its shared
+                            coordinate system supports cross-country comparison.
+                            The redesign preserves those strengths while making
+                            the viewer's tasks more explicit. A country can be
+                            followed without tracing an overlapping path; dates
+                            can be read directly from the x-axis; selected
+                            countries can be aligned on the same day; and exact
+                            values can be retrieved through interaction.
+                        </p>
+
+
+                        <p>
+                            The main trade-off is space. Seven small multiples
+                            require more vertical space than the original
+                            compact phase portrait. Separating the variables
+                            into synchronized tracks also means viewers must
+                            read across aligned views rather than interpret both
+                            dimensions from one position. The redesign therefore
+                            favors task accuracy and readability over compactness.
+                        </p>
+
+
+                        <p>
+                            Global comparison introduces a second trade-off:
+                            showing many countries together increases density.
+                            Country filtering gives viewers control over that
+                            density, but comparison remains less separated than
+                            in the individual-country view. In addition, removing
+                            permanent policy annotations reduces contextual
+                            information about interventions. These are deliberate
+                            trade-offs in favor of clearer quantitative
+                            comparison.
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- 05 · DESIGN DECISIONS -->
+
+        <section class="decisions section">
+
+            <div class="content-wide">
+
+                <div class="section-label">
+                    05 · DESIGN DECISIONS
+                </div>
+
+                <h2>
+                    Why this redesign is clearer
+                </h2>
+
+
+                <div class="decision-grid">
+
+
+                    <article class="decision">
+
+                        <div class="decision-number">
+                            01
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Small multiples with synchronized time series
+                            </h3>
+
+                            <p>
+                                Each country receives its own panel containing
+                                two aligned time-series tracks: average deaths
+                                per day and rate of change. I changed the
+                                original shared trajectory into small multiples
+                                because overlapping paths reduced
+                                <strong>readability</strong> and
+                                <strong>separability</strong>. Dedicated
+                                visual space makes country-specific patterns
+                                easier to trace, while identical scales
+                                preserve quantitative comparison across panels.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="decision">
+
+                        <div class="decision-number">
+                            02
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Time is encoded directly on the x-axis
+                            </h3>
+
+                            <p>
+                                The redesign places every date from January 23
+                                to April 20 directly on a shared time axis.
+                                I changed this because the original represents
+                                time indirectly through movement along a curved
+                                trajectory, making it harder to answer when a
+                                change occurred or whether two countries changed
+                                at the same time. Direct temporal position
+                                improves <strong>accuracy</strong> for temporal
+                                comparison and makes sequence easier to read.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="decision">
+
+                        <div class="decision-number">
+                            03
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Separate tracks for mortality and rate of change
+                            </h3>
+
+                            <p>
+                                Instead of encoding average deaths and rate of
+                                change simultaneously through one phase-portrait
+                                position, the redesign gives each measure its
+                                own aligned track. This reduces decoding cost
+                                while retaining both quantitative variables.
+                                Average deaths are shown in the upper track,
+                                while rate of change is shown below in
+                                deaths/day².
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="decision">
+
+                        <div class="decision-number">
+                            04
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Shared scales and explicit axes
+                            </h3>
+
+                            <p>
+                                All country panels use identical date, mortality,
+                                and rate-of-change scales, with explicit axis
+                                titles and tick marks. I kept shared scales
+                                because independent scales could exaggerate
+                                within-country patterns and make cross-country
+                                values harder to compare. The trade-off is
+                                that countries with smaller values occupy less
+                                vertical space, but their positions remain
+                                directly comparable.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="decision">
+
+                        <div class="decision-number">
+                            05
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Interaction for detailed inspection
+                            </h3>
+
+                            <p>
+                                The redesign adds hover tooltips, country
+                                highlighting, filtering, and date selection.
+                                Hovering over a line reveals the date, new
+                                deaths, average deaths, and rate of change,
+                                while the date selector provides direct access
+                                to a specific day. Detailed information is
+                                therefore available <strong>on demand</strong>
+                                rather than permanently competing with the
+                                primary data marks.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                    <article class="decision">
+
+                        <div class="decision-number">
+                            06
+                        </div>
+
+                        <div>
+
+                            <h3>
+                                Global comparison and temporal animation
+                            </h3>
+
+                            <p>
+                                A global comparison mode allows users to select
+                                specific countries and view their time series
+                                together on the same time axis. The Play
+                                control progressively reveals the timeline,
+                                while the current date remains visible. These
+                                interactions support cross-country temporal
+                                comparison while giving users control over how
+                                much visual density they want to introduce.
+                            </p>
+
+                        </div>
+
+                    </article>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- 06 · REPORT -->
+
+        <section class="report section">
+
+            <div class="content-narrow">
+
+                <div class="section-label">
+                    06 · REPORT
+                </div>
+
+                <h2>
+                    Visualization Critique and Redesign Report
+                </h2>
+
+
+                <div class="report-text">
+
+
+                    <h3>
+                        Original visualization and context
+                    </h3>
+
+                    <p>
+                        The original visualization, created by Danny Dorling
+                        with illustration by Kirsten McClure, shows COVID-19
+                        mortality trajectories for China, France, Germany,
+                        Italy, Spain, the United Kingdom, and the United
+                        States from January 23 to April 20, 2020. Rather than
+                        placing time on the horizontal axis, the phase-portrait
+                        design places the smoothed average number of deaths per
+                        day on the vertical axis and the rate of change in
+                        deaths on the horizontal axis. Its intended message is
+                        to show how mortality level and direction of change
+                        evolved across countries. The primary audience is a
+                        general audience interested in understanding the early
+                        pandemic, while a secondary audience includes readers
+                        comparing national mortality patterns. Key tasks are
+                        to follow trajectories, compare mortality levels,
+                        identify increasing or decreasing periods, and compare
+                        the timing and magnitude of changes.
+                    </p>
+
+
+                    <h3>
+                        Critique
+                    </h3>
+
+                    <p>
+                        The original visualization has three important strengths.
+                        First, its use of <strong>position</strong> is expressive:
+                        two related quantitative variables—mortality level and
+                        rate of change—appear in one composition. Second, the
+                        countries share the same coordinate system, which
+                        supports cross-country comparison without switching
+                        scales. Third, categorical color provides grouping and
+                        helps viewers identify country trajectories. These
+                        strengths make the visualization useful for detecting
+                        broad patterns quickly.
+                    </p>
+
+                    <p>
+                        However, several design choices reduce effectiveness
+                        for detailed comparison. First, the seven trajectories
+                        overlap and cross in the same visual space, reducing
+                        <strong>separability</strong> and making individual
+                        countries harder to follow. Second, time is encoded
+                        indirectly through movement along a curved trajectory,
+                        making it difficult to identify when a change occurred
+                        or compare countries on the same date. Third,
+                        annotations and date labels compete with the primary
+                        marks, weakening <strong>visual hierarchy</strong>.
+                        Fourth, multiple categorical colors are harder to
+                        discriminate when paths overlap. Finally, position,
+                        trajectory shape, color, labels, and annotations create
+                        a high decoding cost. These problems reduce readability
+                        and efficiency for precise analytical tasks.
+                    </p>
+
+
+                    <h3>
+                        Redesign rationale
+                    </h3>
+
+                    <p>
+                        The redesign addresses these weaknesses while preserving
+                        the original's useful quantitative information. First,
+                        the seven countries are separated into small multiples,
+                        directly reducing overplotting and improving
+                        separability while retaining identical scales. Second,
+                        time is placed directly on the x-axis, so viewers can
+                        identify when changes occur and compare countries at
+                        the same date without reconstructing time from a
+                        curved trajectory.
+                    </p>
+
+                    <p>
+                        Third, average deaths and rate of change are separated
+                        into two synchronized tracks. This retains the two
+                        variables that made the original expressive while
+                        giving each one an explicit quantitative axis. Fourth,
+                        annotation is reduced and interaction is used for
+                        detailed inspection. Tooltips provide exact values on
+                        demand, while country controls support focused
+                        exploration. A date selector provides direct access
+                        to a day, and animation supports exploration of
+                        temporal development.
+                    </p>
+
+                    <p>
+                        Finally, a global comparison mode allows users to select
+                        countries and view their time series together. This
+                        preserves the original's cross-country comparison
+                        strength while giving users control over how many
+                        countries appear simultaneously, reducing the need to
+                        display all trajectories at once.
+                    </p>
+
+
+                    <h3>
+                        Original vs. redesign
+                    </h3>
+
+                    <p>
+                        The redesign makes several tasks easier. Following an
+                        individual country no longer requires tracing a path
+                        through overlapping trajectories. Direct temporal
+                        position makes it easier to identify when mortality
+                        changes occur and to compare countries on the same date.
+                        Synchronized tracks make mortality level and rate of
+                        change easier to interpret separately, while identical
+                        scales preserve quantitative comparability. Tooltips
+                        make exact values easier to retrieve, and filtering
+                        controls the density of global comparisons.
+                    </p>
+
+                    <p>
+                        The redesign also has trade-offs. Seven small multiples
+                        require more vertical space than the original compact
+                        composition. Separating the two variables into two
+                        tracks requires viewers to read across aligned views
+                        rather than interpret both dimensions from one position.
+                        Global comparison becomes denser as more countries are
+                        selected, so filtering is provided. Finally, removing
+                        permanent policy annotations reduces contextual
+                        information about interventions. These trade-offs are
+                        intentional: the redesign prioritizes readability,
+                        temporal accuracy, separability, and efficient
+                        comparison for the stated analytical tasks.
+                    </p>
+
+
+                    <h3>
+                        Figures and references
+                    </h3>
+
+                    <p>
+                        <strong>Figure 1.</strong>
+                        Original COVID-19 mortality phase-portrait
+                        visualization by Danny Dorling, illustrated by
+                        Kirsten McClure, covering January 23 to April 20, 2020.
+                        The original visualization is shown in Section 02.
+                    </p>
+
+                    <p>
+                        <strong>Figure 2.</strong>
+                        Redesigned D3.js visualization showing seven
+                        country small multiples with synchronized mortality
+                        and rate-of-change tracks, shared scales, interactive
+                        tooltips, date selection, animation, and global
+                        comparison. The redesign uses the Our World in Data
+                        Cases & deaths data described above. The redesigned
+                        visualization is shown in Section 04.
+                    </p>
+
+                    <p>
+                        The original visualization is sourced from Danny
+                        Dorling's COVID-19 visualization, with illustration by
+                        Kirsten McClure. The underlying mortality data are
+                        sourced from Our World in Data's Cases & deaths
+                        dataset. The project uses the date, country/location,
+                        and new deaths fields for the seven selected countries;
+                        the new-cases field is not used. Full references are
+                        provided in Section 07.
+                    </p>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- 07 · REFERENCES -->
+
+        <section class="references section">
+
+            <div class="content-wide">
+
+                <div class="section-label">
+                    07 · REFERENCES
+                </div>
+
+
+                <div class="reference-list">
+
+
+                    <div class="reference">
+
+                        <span class="reference-number">
+                            01
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Dorling, D. (2020).
+                            </strong>
+
+                            <p>
+                                Three charts that show where the coronavirus
+                                death rate is heading.
+                            </p>
+
+                            <a
+                                href="https://www.dannydorling.org/?p=7758"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                dannydorling.org ↗
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="reference">
+
+                        <span class="reference-number">
+                            02
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Our World in Data.
+                            </strong>
+
+                            <p>
+                                COVID-19 Cases & deaths dataset and
+                                documentation.
+                            </p>
+
+                            <a
+                                href="https://ourworldindata.org/covid-cases"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Our World in Data · Cases & deaths ↗
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="reference">
+
+                        <span class="reference-number">
+                            03
+                        </span>
+
+                        <div>
+
+                            <strong>
+                                Our World in Data.
+                            </strong>
+
+                            <p>
+                                COVID-19 data and technical documentation.
+                            </p>
+
+                            <a
+                                href="https://docs.owid.io/projects/etl/api/covid/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                docs.owid.io ↗
+                            </a>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+    </main>
+
+
+    <footer class="site-footer">
+
+        <div class="content-wide">
+
+            <span>
+                STATS 401 · Visualization Critique & Redesign
+            </span>
+
+            <span>
+                COVID-19 Mortality · 2020
+            </span>
+
+        </div>
+
+    </footer>
+
+    <script src="../js/main.js"></script>
+    <script src="visualization.js"></script>
+
+</body>
+
+</html>
