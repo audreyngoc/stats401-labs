@@ -494,8 +494,8 @@
 
                     <p>
                         The chart uses <strong>position</strong> to encode two
-                        quantitative variables—average deaths per day and
-                        rate of change—within one coordinate system. This is
+                        quantitative variables (<strong>average deaths per day</strong> and
+                        <strong>rate of change</strong>) within one coordinate system. This is
                         expressive because viewers can see the relationship
                         between mortality level and its change without
                         switching between separate charts. The shared
@@ -673,8 +673,8 @@
                         encodes two variables, but time is not a spatial axis.
                         Viewers must infer date by tracing a curved path.
                         <strong>Why it matters:</strong> This makes precise
-                        temporal questions—such as when a change occurred or
-                        what two countries did on the same date—harder to
+                        temporal questions such as when a change occurred or
+                        what two countries did on the same date harder to
                         answer.
                         <strong>Improvement:</strong> Use a direct time-series
                         x-axis so date is represented by position and can be
@@ -1823,8 +1823,8 @@
                     <p>
                         The original visualization has three important strengths.
                         First, its use of <strong>position</strong> is expressive:
-                        two related quantitative variables—mortality level and
-                        rate of change—appear in one composition. Second, the
+                        two related quantitative variables (<strong>mortality level</strong> and
+                        <strong>rate of change</strong>)appear in one composition. Second, the
                         countries share the same coordinate system, which
                         supports cross-country comparison without switching
                         scales. Third, categorical color provides grouping and
@@ -1890,6 +1890,23 @@
                         display all trajectories at once.
                     </p>
 
+                    <h3>
+                        D3.js implementation
+                    </h3>
+
+                    <p>
+                        The redesign is implemented in <strong>D3.js</strong>
+                        and uses an external CSV dataset rather than hard-coded
+                        values. D3.js is used to load and process the mortality
+                        data, construct the shared quantitative scales and time
+                        axes, generate the country small multiples and
+                        synchronized tracks, and support interactive features
+                        including tooltips, date selection, country highlighting,
+                        filtering, and temporal animation. This implementation
+                        connects the redesign decisions directly to the
+                        underlying data and allows the visualization to update
+                        dynamically based on user interaction.
+                    </p>
 
                     <h3>
                         Original vs. redesign
