@@ -5,5 +5,13 @@ lab4/sentiment_analysis.py
 lab7/lab7_practice.html
 lab7/lab7_practice.js
 lab7/lab7_practice.css
-lab8
-individual_project/data/covid_cases_deaths_raw.csv
+individual_project/data/covid_cases_deaths
+
+# Python virtual environments
+.venv/
+venv/
+lab8/.venv/
+
+# Python cache
+__pycache__/
+*.py[cod]_raw.csv

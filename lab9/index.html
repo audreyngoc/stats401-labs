@@ -1,23 +1,274 @@
+
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>STATS 401 - Lab 9</title>
-
+    <meta name="description" content="An interactive comparison of 2025 nominal GDP using a choropleth map and a cartogram, exploring geographic context, economic magnitude, and visual encoding trade-offs.">
+    <title>Lab 9 | Mapping the Global Economy</title>
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
 <body>
+    <header class="lab9-header">
+        <p class="lab9-eyebrow">STATS 401 · DATA ACQUISITION AND VISUALIZATION</p>
+        <h1>Mapping the Global Economy</h1>
+        <p class="lab9-header-subtitle">
+            Lab 9 · Comparing geographic and quantitative representations of GDP
+        </p>
 
-    <h1>STATS 401 - Lab 9</h1>
+        <nav id="lab-nav" class="lab-nav">
+            <a href="../index.html">Home</a>
+        </nav>
+    </header>
 
-    <p>Lab 9 will be added here.</p>
+    <main class="lab9-main">
 
-    <a href="../index.html">Back to Home</a>
+        <!-- 01 / DATA AND CONTEXT -->
+        <section id="dataset-description" class="lab9-intro">
+            <p class="lab9-section-label">01 / DATA &amp; CONTEXT</p>
+            <h2>Understanding Global Economic Size</h2>
 
+            <p>
+                How does the world economy look when economic output, rather
+                than physical territory, determines what we see? This lab
+                explores that question through two coordinated visualizations
+                of the 50 economies with the highest 2025 nominal gross domestic
+                product (GDP) in the supplied dataset. The choropleth encodes
+                GDP using color while preserving geographic boundaries. The
+                cartogram encodes GDP through country area, making differences
+                in economic magnitude more visually prominent.
+            </p>
+
+            <p>
+                The dataset,
+                <code>lab9_gdp_2025_top50.csv</code>, contains four variables:
+                <code>iso3</code>, a three-letter geographic identifier;
+                <code>country</code>, the economy's name;
+                <code>gdp_2025_billion_usd</code>, nominal GDP in billions of
+                U.S. dollars; and <code>rank</code>, its position among the
+                included economies. GDP records are joined to geographic
+                features using ISO-3 identifiers so that the same economic
+                values can be compared across both maps.
+            </p>
+
+            <p>
+                The visualizations are coordinated through linked highlighting:
+                hovering over a country in either map highlights its counterpart
+                in the other. This interaction helps viewers match countries
+                even when the cartogram's distorted shapes make familiar
+                geographic outlines difficult to recognize.
+            </p>
+        </section>
+
+        <!-- DATA SOURCE AND METHOD -->
+        <section id="data-source" class="lab9-info-panel">
+            <h2>Dataset and Method</h2>
+
+            <p>
+                <strong>Measure:</strong> 2025 nominal GDP at current prices,
+                measured in billions of U.S. dollars.
+                <strong>Coverage:</strong> the 50 economies in the provided
+                dataset. GDP rank refers to these included economies.
+            </p>
+
+            <p>
+                <strong>Source:</strong> IMF World Economic Outlook, October
+                2025, nominal-GDP series. WEO observations may include IMF staff
+                estimates where complete official data are unavailable and may
+                be revised in subsequent releases. The values should therefore
+                be understood as estimates for the 2025 reference year rather
+                than permanently fixed measurements.
+            </p>
+
+            <p>
+                GDP values are matched to world geographic features using
+                ISO-3 identifiers. Countries outside the supplied top 50 are
+                classified as <strong>no data</strong>, not as having zero GDP.
+                Their neutral appearance indicates that their GDP values are
+                absent from this particular dataset; it does not imply that
+                these economies have no economic activity.
+            </p>
+
+            <p>
+                The two maps use different visual encodings for the same
+                quantitative measure. This makes it possible to compare how
+                color and area influence the perception of economic size while
+                distinguishing the geographic context preserved by a
+                conventional map from the spatial distortion introduced by
+                a cartogram.
+            </p>
+        </section>
+
+        <!-- 02 / CHOROPLETH -->
+        <section id="choropleth-section" class="lab9-section">
+            <div class="lab9-section-heading">
+                <p class="lab9-section-label">02 / COLOR ENCODING</p>
+                <h2>2025 GDP Choropleth</h2>
+
+                <p>
+                    The choropleth preserves countries' geographic boundaries
+                    and approximate locations while using color intensity to
+                    represent 2025 nominal GDP. Darker blue indicates a higher
+                    GDP value, while neutral gray identifies countries without
+                    GDP values in the supplied top-50 dataset. This encoding
+                    allows viewers to recognize countries, locate economies,
+                    and examine the regional distribution of economic output
+                    without changing the underlying geography.
+                </p>
+
+                <p>
+                    GDP values vary substantially in magnitude, so a linear
+                    color scale would allocate most of its range to the largest
+                    economies. This could make differences among smaller
+                    included economies difficult to distinguish. A logarithmic
+                    scale spreads out lower values and makes a wider range of
+                    economies visually distinguishable. The legend provides
+                    quantitative reference points for interpreting the colors.
+                    Because the scale is logarithmic, equal visual steps
+                    correspond to multiplicative rather than equal absolute
+                    differences in GDP.
+                </p>
+            </div>
+
+            <div class="lab9-chart-card">
+                <div class="lab9-chart-meta">
+                    <span>Metric: Nominal GDP</span>
+                    <span>Unit: Billion USD</span>
+                    <span>Scale: Logarithmic</span>
+                </div>
+
+                <div id="choropleth"
+                     class="lab9-map-container"
+                     aria-label="Interactive world GDP choropleth">
+                </div>
+
+                <div id="choropleth-legend" class="lab9-legend"></div>
+
+                <p class="lab9-interaction-note">
+                    Hover over a country to view its name, GDP, and rank.
+                    The corresponding country is highlighted in both maps.
+                    Scroll to zoom and drag to pan.
+                </p>
+            </div>
+        </section>
+
+        <!-- 03 / CARTOGRAM -->
+        <section id="cartogram-section" class="lab9-section">
+            <div class="lab9-section-heading">
+                <p class="lab9-section-label">03 / AREA ENCODING</p>
+                <h2>2025 GDP Cartogram</h2>
+
+                <p>
+                    Unlike the choropleth, the cartogram changes the apparent
+                    area of countries to represent nominal GDP rather than
+                    physical land area. Economies with larger GDP values should
+                    occupy more visual area, making their relative economic
+                    weight easier to compare. Neutral-colored countries have
+                    no GDP value in the supplied dataset and should not be
+                    interpreted as having zero GDP.
+                </p>
+
+                <p>
+                    This transformation shifts attention from where countries
+                    are located to how much economic output they represent.
+                    However, enlarging and shrinking countries requires
+                    geographic distortion: familiar shapes, distances, and
+                    relative positions become less reliable. The cartogram is
+                    therefore most useful for comparing economic magnitude,
+                    while the choropleth is better suited to geographic lookup
+                    and regional analysis.
+                </p>
+            </div>
+
+            <div class="lab9-chart-card">
+                <div class="lab9-chart-meta">
+                    <span>Metric: Nominal GDP</span>
+                    <span>Area: GDP magnitude</span>
+                    <span>Same top-50 dataset</span>
+                </div>
+
+                <div id="cartogram"
+                     class="lab9-map-container"
+                     aria-label="Interactive world GDP cartogram">
+                </div>
+
+                <p class="lab9-interaction-note">
+                    Hover over a country to view its name, GDP, and rank and
+                    highlight its counterpart in the choropleth. Shapes and
+                    positions are distorted, so compare area rather than
+                    physical territory.
+                </p>
+            </div>
+        </section>
+
+        <!-- 04 / PART E: ANALYZE AND COMPARE -->
+        <section id="analysis" class="lab9-section lab9-analysis">
+            <p class="lab9-section-label">04 / DESIGN REFLECTION</p>
+            <h2>Analyze and Compare</h2>
+
+            <div class="lab9-conclusion">
+                <h3>How Visual Encoding Shapes Our Perception of Global GDP</h3>
+
+                <p>
+                    In the choropleth, the United States and China are the
+                    most visually prominent economies because their high GDP
+                    values are represented by the darkest blue shades. Other
+                    major economies, including Germany, Japan, and India, can
+                    be compared through differences in color intensity. In
+                    the cartogram, the United States and China become especially
+                    dominant in visual area, while smaller economies occupy
+                    less space. This makes differences in economic magnitude
+                    more immediate than when comparing colors alone.
+                </p>
+
+                <p>
+                    The choropleth preserves country boundaries, approximate
+                    locations, and regional relationships, making it useful
+                    for identifying countries, locating economies, and
+                    examining geographic patterns in economic output. Its
+                    logarithmic color scale helps distinguish GDP values across
+                    a highly skewed distribution, although color differences
+                    can still be difficult to compare precisely. The cartogram
+                    instead uses area to represent GDP, shifting attention
+                    from physical territory to economic weight. However, its
+                    distorted shapes, distances, and relative positions make
+                    geographic identification and location-based comparisons
+                    less reliable.
+                </p>
+
+                <p>
+                    Changing from color to area changes how global economic
+                    inequality is perceived: countries with large economies
+                    become visually dominant regardless of their physical
+                    size. The choropleth is better suited to geographic and
+                    regional questions, whereas the cartogram is more effective
+                    for comparing relative economic magnitude. Linked
+                    highlighting helps users identify the same economy in both
+                    views. Neither representation is universally superior;
+                    together, they balance geographic fidelity with a more
+                    immediate understanding of economic differences.
+                </p>
+            </div>
+        </section>
+
+        <footer class="lab9-footer">
+            <p>STATS 401 · Lab 9 · Geospatial Visualization</p>
+            <p>Data: IMF World Economic Outlook, October 2025</p>
+        </footer>
+
+    </main>
+
+    <div id="tooltip"
+         class="tooltip lab9-tooltip"
+         role="status"
+         aria-live="polite">
+    </div>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/cartogram-chart@1.4.4"></script>
+    <script src="../js/main.js"></script>
+    <script src="lab9.js"></script>
 </body>
-
 </html>
