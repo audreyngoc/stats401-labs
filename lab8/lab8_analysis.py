@@ -323,13 +323,26 @@ def get_cluster_terms(
     return cluster_terms
 
 
-def create_cluster_labels():
-    return {
-        cluster: f"Cluster {cluster}"
-        for cluster in range(
-            N_CLUSTERS
-        )
+
+def create_cluster_labels(df):
+    labels = {
+        0: "Molecular Bioscience and Physical Sciences",
+        1: "Academic Support and Career Development",
+        2: "Politics, Culture, and Social Thought",
+        3: "Academic Policies and Credit Requirements",
+        4: "China Studies and Global History",
+        5: "Mathematics, Computing, and Data Science",
+        6: "Economics, Public Policy, and Global Health",
+        7: "Media, Arts, and Digital Culture",
     }
+
+    df["cluster_name"] = (
+        pd.to_numeric(df["cluster"], errors="coerce")
+        .map(labels)
+        .fillna("Unclassified Topic")
+    )
+
+    return df
 
 
 def create_cluster_review(
@@ -523,9 +536,7 @@ def save_statistics(
     )
 
 
-def save_embedding_map(
-    df
-):
+def save_embedding_map(df):
     columns = [
         "passage_id",
         "chapter",
@@ -542,9 +553,24 @@ def save_embedding_map(
         "neighbor_scores"
     ]
 
-    df[
-        columns
-    ].to_csv(
+    # Copy only the columns needed for the visualization
+    export_df = df[columns].copy()
+
+    # Convert neighbor lists to pipe-separated strings
+    export_df["neighbor_ids"] = export_df["neighbor_ids"].apply(
+        lambda values: "|".join(map(str, values))
+        if isinstance(values, (list, tuple))
+        else str(values)
+    )
+
+    export_df["neighbor_scores"] = export_df["neighbor_scores"].apply(
+        lambda values: "|".join(map(str, values))
+        if isinstance(values, (list, tuple))
+        else str(values)
+    )
+
+    # Export the map data
+    export_df.to_csv(
         OUTPUT_MAP,
         index=False,
         encoding="utf-8"
@@ -678,14 +704,7 @@ def main():
         )
     )
 
-    cluster_labels = (
-        create_cluster_labels()
-    )
-
-    df["cluster_name"] = (
-        df["cluster"]
-        .map(cluster_labels)
-    )
+    df = create_cluster_labels(df)
 
     create_cluster_review(
         df,

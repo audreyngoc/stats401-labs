@@ -630,7 +630,7 @@ function applyFilters() {
             const searchMatch =
                 query === ""
                 ||
-                d.text_clean
+                (d.text || "")
                     .toLowerCase()
                     .includes(query)
                 ||

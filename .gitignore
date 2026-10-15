@@ -6,6 +6,8 @@ lab7/lab7_practice.html
 lab7/lab7_practice.js
 lab7/lab7_practice.css
 individual_project/data/covid_cases_deaths
+individual_project/data/covid_cases_deaths_raw.csv  
+
 
 # Python virtual environments
 .venv/
