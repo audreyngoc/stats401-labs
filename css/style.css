@@ -1220,3 +1220,90 @@ p {
 .lab9-cartogram-country.highlighted {
     filter: brightness(1.08);
 }
+
+/* Lab 10 */
+.lab10-voice-panel {
+    margin-top: 12px;
+    padding: 14px 16px;
+    border: 1px solid #dfe3e8;
+    border-radius: 7px;
+    background: #f8fafc;
+}
+
+.lab10-voice-panel h3 {
+    margin: 0 0 6px;
+    color: #172554;
+    font-size: 15px;
+}
+
+.lab10-voice-panel p {
+    margin: 6px 0;
+    color: #475569;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.lab10-voice-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 10px 0;
+}
+
+.lab10-voice-actions button {
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    background: #fff;
+    color: #172554;
+    cursor: pointer;
+    font-size: 12px;
+}
+
+.lab10-voice-actions button:hover {
+    background: #eaf0f8;
+}
+
+.lab10-voice-actions button:focus-visible {
+    outline: 2px solid #426b98;
+    outline-offset: 2px;
+}
+
+#voice-status,
+#voice-action {
+    padding: 8px 10px;
+    border-radius: 5px;
+    background: #fff;
+    border: 1px solid #e2e8f0;
+    overflow-wrap: anywhere;
+}
+
+#voice-status {
+    color: #334155;
+}
+
+#voice-action {
+    color: #1b4481;
+    font-weight: 600;
+}
+
+.lab10-voice-panel details {
+    margin-top: 10px;
+    color: #475569;
+    font-size: 12px;
+}
+
+.lab10-voice-panel summary {
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.lab10-voice-panel li {
+    margin: 4px 0;
+}
+
+@media (max-width: 600px) {
+    .lab10-voice-actions button {
+        flex: 1 1 auto;
+    }
+}

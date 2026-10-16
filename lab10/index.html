@@ -1,23 +1,600 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>STATS 401 - Lab 10</title>
-
+    <title>STATS 401 — Lab 10: Voice Interaction</title>
     <link rel="stylesheet" href="../css/style.css">
+
+    <style>
+        .lab10-voice-panel {
+            margin: 0 0 16px;
+            padding: 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: #f8fafc;
+        }
+
+        .lab10-voice-panel h3 {
+            margin: 0 0 7px;
+            color: #172554;
+            font-size: 1.08rem;
+        }
+
+        .lab10-voice-panel p {
+            line-height: 1.55;
+        }
+
+        .lab10-voice-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 12px 0;
+        }
+
+        .lab10-voice-actions button {
+            border: 1px solid #94a3b8;
+            border-radius: 5px;
+            padding: 8px 12px;
+            background: #fff;
+            color: #172554;
+            cursor: pointer;
+            font: inherit;
+        }
+
+        .lab10-voice-actions button:hover {
+            background: #eaf0f8;
+        }
+
+        .lab10-voice-actions button:focus-visible {
+            outline: 3px solid #2563eb;
+            outline-offset: 2px;
+        }
+
+        .lab10-voice-actions button:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+        }
+
+        .lab10-feedback {
+            margin: 8px 0;
+            padding: 9px 11px;
+            border: 1px solid #dbe3ef;
+            border-radius: 5px;
+            background: #fff;
+            overflow-wrap: anywhere;
+        }
+
+        #voice-status {
+            color: #334155;
+        }
+
+        #voice-heard {
+            color: #1d4ed8;
+        }
+
+        #voice-action {
+            color: #166534;
+            font-weight: 600;
+        }
+
+        .lab10-voice-panel details {
+            margin-top: 10px;
+        }
+
+        .lab10-voice-panel summary {
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .lab10-voice-panel li {
+            margin: 5px 0;
+            line-height: 1.5;
+        }
+
+        .lab10-writing {
+            line-height: 1.75;
+        }
+
+        .lab10-writing table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+
+        .lab10-writing th,
+        .lab10-writing td {
+            padding: 9px;
+            border: 1px solid #dbe3ef;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        .lab10-writing th {
+            background: #f1f5f9;
+        }
+
+        .lab10-reflection {
+            padding: 14px 16px;
+            border-left: 4px solid #64748b;
+            background: #f8fafc;
+        }
+
+        @media (max-width: 600px) {
+            .lab10-voice-actions button {
+                flex: 1 1 140px;
+            }
+
+            .lab10-writing table {
+                font-size: 0.92rem;
+            }
+        }
+    </style>
 </head>
 
 <body>
+    <h1>STATS 401: Data Acquisition and Visualization</h1>
 
-    <h1>STATS 401 - Lab 10</h1>
+    <nav id="lab-nav" class="lab-nav"></nav>
 
-    <p>Lab 10 will be added here.</p>
+    <main>
+        <section id="dataset-description">
+            <h2>Lab 10: Voice Interaction with Data Visualizations</h2>
 
-    <a href="../index.html">Back to Home</a>
+            <p>
+                This visualization shows how commercial transactions
+                among companies evolve over 60 days. Companies are
+                represented as nodes, while commercial relationships
+                are represented as links. The network changes over
+                time as relationships appear, disappear, and change
+                in transaction activity.
+            </p>
 
+            <p>
+                The datasets are fabricated for visualization practice
+                and do not represent real companies or transactions.
+            </p>
+        </section>
+
+        <section id="data-source">
+            <h2>Data Structure</h2>
+
+            <div class="visualization-note">
+                <strong>Company data:</strong>
+                Company ID, company name, sector, and region.
+
+                <br><br>
+
+                <strong>Transaction data:</strong>
+                Date, day, source company, target company,
+                transaction amount, transaction type, and
+                transaction count.
+
+                <br><br>
+
+                <strong>Network structure:</strong>
+                Companies are represented as nodes and commercial
+                transactions are represented as undirected links
+                between companies.
+            </div>
+        </section>
+
+        <section id="visualization-section">
+            <h2>Animated Commercial Network</h2>
+
+            <div class="visualization-note">
+                The network displays the commercial relationships
+                active on the selected day. Company nodes remain
+                persistent across time to help preserve the mental
+                map, while links enter and exit as relationships
+                change.
+            </div>
+
+            <div class="lab7-layout">
+                <aside class="lab7-legend-panel">
+                    <h3>Encoding Legend</h3>
+
+                    <p class="legend-description">
+                        How visual properties represent data
+                        in the network.
+                    </p>
+
+                    <div id="legend"></div>
+                </aside>
+
+                <div class="lab7-right-column">
+                    <div class="lab7-controls">
+
+                        <!-- Lab 10 voice interaction panel -->
+                        <section
+                            class="lab10-voice-panel"
+                            aria-labelledby="voice-heading">
+
+                            <h3 id="voice-heading">
+                                Lab 10 — Voice Interaction
+                            </h3>
+
+                            <p>
+                                Use spoken commands to explore changes
+                                over time, emphasize a geographic region,
+                                or inspect a company's relationships.
+                                Voice control is optional; the original
+                                mouse and button controls remain available.
+                            </p>
+
+                            <div class="lab10-voice-actions">
+                                <button id="voice-button" type="button">
+                                    Start Voice Control
+                                </button>
+
+                                <button
+                                    id="voice-stop"
+                                    type="button"
+                                    disabled>
+                                    Stop Listening
+                                </button>
+
+                                <button id="voice-clear" type="button">
+                                    Clear Emphasis
+                                </button>
+                            </div>
+
+                            <p
+                                id="voice-status"
+                                class="lab10-feedback"
+                                role="status"
+                                aria-live="polite">
+                                Voice control is inactive. Click Start Voice
+                                Control to request microphone access.
+                            </p>
+
+                            <p
+                                id="voice-heard"
+                                class="lab10-feedback"
+                                role="status"
+                                aria-live="polite">
+                                Heard: —
+                            </p>
+
+                            <p
+                                id="voice-action"
+                                class="lab10-feedback"
+                                role="status"
+                                aria-live="polite">
+                                Action: No voice command has been applied.
+                            </p>
+
+                            <details>
+                                <summary>
+                                    Voice commands and how to use them
+                                </summary>
+
+                                <p>
+                                    Click <strong>Start Voice Control</strong>
+                                    and grant microphone permission if asked.
+                                    Speak a command and check the recognized
+                                    transcript and action feedback. Click
+                                    <strong>Stop Listening</strong> when finished.
+                                </p>
+
+                                <ul>
+                                    <li>
+                                        <strong>Timeline:</strong>
+                                        “Next day,” “Previous day,”
+                                        “Go to day 12,” “Play,” “Pause,”
+                                        and “Reset.”
+                                    </li>
+
+                                    <li>
+                                        <strong>Region emphasis:</strong>
+                                        “Show Europe,” “Show Asia,”
+                                        “Show North America,” or
+                                        “Clear region filter.”
+                                    </li>
+
+                                    <li>
+                                        <strong>Company emphasis:</strong>
+                                        “Highlight [company name],”
+                                        “Focus on [company name],” or
+                                        “Show connections for [company name].”
+                                        The command works with names in the
+                                        loaded company dataset.
+                                    </li>
+
+                                    <li>
+                                        <strong>Clear/help:</strong>
+                                        “Clear highlight,” “Show all regions,”
+                                        or “Help.”
+                                    </li>
+                                </ul>
+
+                                <p>
+                                    If speech recognition is unsupported,
+                                    microphone permission is denied, or a
+                                    command is not understood, use the
+                                    conventional controls below.
+                                </p>
+                            </details>
+                        </section>
+
+                        <!-- Original Lab 7 temporal controls -->
+                        <div class="lab7-buttons">
+                            <h3>Temporal Controls</h3>
+
+                            <button id="play" type="button">Play</button>
+                            <button id="pause" type="button">Pause</button>
+                            <button id="reset" type="button">Reset</button>
+                        </div>
+
+                        <div class="lab7-slider-row">
+                            <label for="time-slider">Time:</label>
+
+                            <input
+                                id="time-slider"
+                                type="range"
+                                min="1"
+                                max="60"
+                                value="1"
+                                step="1">
+
+                            <span id="day-label">Day 1</span>
+
+                            <label for="date-picker">Select date:</label>
+                            <input id="date-picker" type="date">
+                        </div>
+
+                        <div id="current-day" class="current-day">
+                            Day 1
+                        </div>
+                    </div>
+
+                    <div class="lab7-network">
+                        <div id="visualization"></div>
+                        <div id="tooltip" class="tooltip"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="analysis">
+            <h2>Design Description</h2>
+
+            <p>
+                <strong>1. Visual channels.</strong>
+                Node <strong>color</strong> represents company sector.
+                Node <strong>shape</strong> represents geographic region.
+                Node <strong>size</strong> represents current transaction
+                volume. Link <strong>width</strong> represents transaction
+                amount, while link <strong>opacity</strong> represents
+                transaction count.
+            </p>
+
+            <p>
+                <strong>2. Temporal encoding.</strong>
+                Time is represented through animation, the interactive
+                time slider, and the date selector. As the selected day
+                changes, active commercial relationships are updated.
+                New relationships fade into the network and inactive
+                relationships fade out.
+            </p>
+
+            <p>
+                <strong>3. Mental map preservation.</strong>
+                The same company nodes are maintained throughout the
+                animation instead of recreating the entire network for
+                every day. The force simulation is gently restarted when
+                links change. This helps users follow companies while
+                the network evolves.
+            </p>
+        </section>
+
+        <section id="temporal-analysis" class="lab10-writing">
+            <h2>Temporal Network Analysis</h2>
+
+            <p>
+                <strong>
+                    1. How does overall connectivity change across the 60 days?
+                </strong>
+            </p>
+            <p>
+                Connectivity fluctuates over time, but the later period
+                appears denser than the beginning. On Day 3, the network
+                contains 3 active links connecting 6 companies; on Day 57,
+                it contains 10 active links connecting 12 companies.
+                These snapshots illustrate a broader set of active
+                commercial relationships later in the period. They are
+                examples of individual days, rather than proof that
+                connectivity increases monotonically.
+            </p>
+
+            <p>
+                <strong>
+                    2. Which companies appear most commercially active?
+                </strong>
+            </p>
+            <p>
+                Fusion Electronics, Ion Systems, Cedar Retail, and Harbor
+                Shipping are visually prominent on several days. Larger
+                nodes indicate greater transaction volume, while multiple
+                visible links indicate more active relationships. Their
+                central positions in the force-directed layout help with
+                visual exploration, but position alone should not be
+                interpreted as a formal centrality measure.
+            </p>
+
+            <p>
+                <strong>
+                    3. When does the network become more fragmented?
+                </strong>
+            </p>
+            <p>
+                The network is relatively fragmented on some earlier days.
+                For example, Day 10 shows 8 active links connecting
+                11 companies, while Day 11 shows 3 active links connecting
+                6 companies. This change is consistent with a short-term
+                reduction in active connectivity. Later in the timeline,
+                particularly around Day 40 onward, the network more often
+                appears to reconnect after highly active days. This is a
+                visual pattern in the displayed snapshots, not evidence
+                of a causal mechanism.
+            </p>
+
+            <p>
+                <strong>
+                    4. Which relationships appear or disappear?
+                </strong>
+            </p>
+            <p>
+                Links change as the active transactions change. The Harbor
+                Shipping–Juniper Stores relationship is visible on Day 9
+                but is absent in later snapshots. By Day 59, relationships
+                such as Ion Systems–Apex Textiles and Fusion Electronics–Ion
+                Systems are visible. Link width and opacity help compare
+                transaction amount and transaction count, respectively.
+            </p>
+
+            <p>
+                <strong>
+                    5. How does cross-regional activity appear to change?
+                </strong>
+            </p>
+            <p>
+                Connections between nodes with different shapes indicate
+                relationships between companies in different regions. On
+                Day 9, Granite Wholesale (Europe) connects with Keystone
+                Materials (Asia). On Day 59, visible cross-regional examples
+                include Ion Systems (North America)–Apex Textiles (Asia)
+                and Fusion Electronics (Asia)–Ion Systems (North America).
+                These examples illustrate cross-regional links in selected
+                snapshots; they do not by themselves establish a trend for
+                the entire period.
+            </p>
+        </section>
+
+        <section id="lab10-design" class="lab10-writing">
+            <h2>Lab 10: Interaction Design</h2>
+
+            <p>
+                <strong>Previous visualization.</strong>
+                This submission extends the existing Lab 7 temporal
+                commercial-network visualization. It preserves the D3.js
+                network, visual encodings, timeline, and date picker rather
+                than rebuilding the visualization.
+            </p>
+
+            <p>
+                <strong>Interaction modality and task.</strong>
+                Voice commands support temporal navigation and targeted
+                exploration. Users can move between days, play or pause
+                the animation, emphasize a region, or highlight a selected
+                company and its active connections.
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Command</th>
+                        <th>Visualization response</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>“Next day” / “Previous day” / “Go to day 12”</td>
+                        <td>
+                            Changes the selected time step and updates
+                            the active network.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>“Play” / “Pause” / “Reset”</td>
+                        <td>
+                            Controls the existing temporal animation.
+                            Reset returns to Day 1 and clears voice emphasis.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>“Show Europe” or another data region</td>
+                        <td>
+                            Emphasizes companies in the requested region
+                            and relationships incident to them.
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>“Highlight [company name]”</td>
+                        <td>
+                            Highlights the named company and its active
+                            transaction connections.
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <p>
+                <strong>Feedback and fallback.</strong>
+                The interface displays the recognized transcript, listening
+                state, and the action taken. If recognition fails or is
+                unavailable, the original Play, Pause, Reset, slider, date
+                picker, hover tooltips, and mouse interaction remain available.
+                The microphone is activated only after the user clicks
+                Start Voice Control.
+            </p>
+        </section>
+
+        <section id="lab10-reflection" class="lab10-writing">
+            <h2>Lab 10: Design Reflection</h2>
+
+            <div class="lab10-reflection">
+                <p>
+                    I extended my Lab 7 temporal commercial-network
+                    visualization with voice interaction while preserving
+                    the original D3.js network, visual encodings, timeline,
+                    date picker, and mouse controls. Voice commands support
+                    temporal navigation, playback control, regional emphasis,
+                    and company-level exploration. These tasks suit voice
+                    because users can issue short commands to move between
+                    time steps or focus on a company without locating a small
+                    control or node in a dense network. For example,
+                    “Go to day 12” supports temporal comparison, while
+                    “Highlight [company name]” supports exploration of a
+                    company's active transaction connections.
+                </p>
+
+                <p>
+                    The interface provides transcript and action feedback
+                    so users can check how their commands were interpreted.
+                    The original buttons, slider, date picker, and mouse
+                    interactions remain available if voice recognition fails
+                    or is unavailable. Potential limitations include browser
+                    compatibility, microphone permissions, background noise,
+                    and errors when recognizing company names. These
+                    limitations mean voice should supplement rather than
+                    replace conventional interaction. Overall, this extension
+                    explores how speech can make common navigation and
+                    selection tasks more direct while preserving access to
+                    the original visualization.
+                </p>
+            </div>
+        </section>
+
+        <section id="dataset-note">
+            <h2>Dataset Note</h2>
+
+            <div class="visualization-note">
+                The company and transaction datasets are fabricated for
+                visualization practice. They do not represent real companies,
+                transactions, or commercial activity.
+            </div>
+        </section>
+    </main>
+
+    <!-- Load libraries and shared navigation before the visualization. -->
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="../js/main.js"></script>
+
+    <!-- Original Lab 7 visualization, copied into the Lab 10 folder. -->
+    <script src="lab10.js"></script>
+
+    <!-- New Lab 10 voice interaction code. -->
+    <script src="voice-interaction.js"></script>
 </body>
-
 </html>
