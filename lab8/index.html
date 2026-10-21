@@ -1,381 +1,558 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="An interactive semantic exploration of the Duke Kunshan University Undergraduate Instruction Bulletin.">
 
-    <title>STATS 401 — Lab 8</title>
+    <title>Lab 8 | Mapping the DKU Bulletin</title>
 
     <link rel="stylesheet" href="../css/style.css">
 </head>
 
-<body>
+<body class="lab8-page">
 
-    <h1>STATS 401: Data Acquisition and Visualization</h1>
+    <nav id="lab-nav" class="lab-nav" aria-label="Lab navigation"></nav>
 
-    <nav id="lab-nav" class="lab-nav"></nav>
+    <main class="lab8-main">
 
-    <main>
+        <header id="dataset-description" class="lab8-hero">
+            <div class="hero-content">
+                <p class="eyebrow">STATS 401 · DATA ACQUISITION &amp; VISUALIZATION</p>
 
-        <section id="dataset-description">
+                <h1>Mapping the DKU Bulletin</h1>
 
-            <h2>Lab 8: Web Text Data and Visualization: Exploring a Large Bulletin</h2>
-
-            <p>
-                This visualization explores the Duke Kunshan University
-                Undergraduate Instruction Bulletin as a structured text corpus.
-                Each paragraph or short policy block is treated as one passage
-                and connected to both its formal location in the bulletin and
-                its semantic representation.
-            </p>
-
-            <div class="visualization-note">
-
-                <strong>Bulletin:</strong>
-                Duke Kunshan University Undergraduate Instruction Bulletin
-                <br><br>
-
-                <strong>Version:</strong>
-                2021–2022
-                <br><br>
-
-                <strong>Source:</strong>
-                Official Duke Kunshan University Undergraduate Bulletin
-                <br><br>
-
-                <strong>Unit of analysis:</strong>
-                One paragraph or short policy block
-                <br><br>
-
-                <strong>Hierarchy:</strong>
-                Chapter → Section → Subsection → Passage
-
-            </div>
-
-        </section>
-
-
-        <section id="corpus-overview">
-
-            <h2>1. Corpus Overview</h2>
-
-            <div id="corpus-statistics"
-                 class="stats-grid">
-
-                <div class="stat-card">
-                    <span class="stat-label">
-                        Raw Passages
-                    </span>
-
-                    <strong id="raw-count">
-                        —
-                    </strong>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-label">
-                        Clean Passages
-                    </span>
-
-                    <strong id="clean-count">
-                        —
-                    </strong>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-label">
-                        Average Passage Length
-                    </span>
-
-                    <strong id="average-length">
-                        —
-                    </strong>
-                </div>
-
-                <div class="stat-card">
-                    <span class="stat-label">
-                        Formal Sections
-                    </span>
-
-                    <strong id="section-count">
-                        —
-                    </strong>
-                </div>
-
-            </div>
-
-
-            <h3 class="design-subheading">
-                Passages by Formal Section
-            </h3>
-
-            <div id="section-summary"></div>
-
-
-            <h3 class="design-subheading">
-                Analysis Method
-            </h3>
-
-            <div class="visualization-note">
-
-                <strong>Embedding model:</strong>
-                all-MiniLM-L6-v2
-                <br>
-
-                <strong>Dimensionality reduction:</strong>
-                UMAP
-                <br>
-
-                <strong>UMAP settings:</strong>
-                15 neighbors, 0.15 minimum distance, cosine metric
-                <br>
-
-                <strong>Clustering:</strong>
-                K-Means, 8 clusters
-                <br>
-
-                <strong>Topic interpretation:</strong>
-                representative passages and TF-IDF terms
-
-            </div>
-
-        </section>
-
-
-        <section id="semantic-section">
-
-            <h2>2. Semantic Embedding Map</h2>
-
-            <p>
-                Each point represents one bulletin passage. Nearby points
-                generally represent passages with similar semantic content.
-                Color identifies the semantic topic, while point size
-                represents passage length.
-            </p>
-
-
-            <div id="map-controls"
-                 class="map-controls">
-
-                <div class="control-group">
-
-                    <label for="search">
-                        Search bulletin
-                    </label>
-
-                    <input
-                        type="text"
-                        id="search"
-                        placeholder="Search bulletin..."
-                    >
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="section-filter">
-                        Formal section
-                    </label>
-
-                    <select id="section-filter">
-
-                        <option value="all">
-                            All sections
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <div class="control-group">
-
-                    <label for="topic-filter">
-                        Semantic topic
-                    </label>
-
-                    <select id="topic-filter">
-
-                        <option value="all">
-                            All topics
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-                <button
-                    id="reset-filters"
-                    type="button">
-
-                    Reset
-
-                </button>
-
-            </div>
-
-
-            <div id="semantic-legend">
-
-                <h3 class="design-subheading">
-                    Semantic Topic Legend
-                </h3>
-
-                <div id="topic-legend"></div>
-
-            </div>
-
-
-            <div id="semantic-map"></div>
-
-
-            <div class="visualization-note">
-
-                <strong>Visual encodings:</strong>
-                <br>
-
-                Position → UMAP semantic embedding
-                <br>
-
-                Color → Semantic topic
-                <br>
-
-                Size → Passage word count
-                <br>
-
-                Highlight → Search, filters, selected passage,
-                semantic neighbors, and matrix selection
-
-            </div>
-
-
-            <div id="detail-panel"
-                 class="detail-panel">
-
-                <h3>Passage Details</h3>
-
-                <p>
-                    Select a passage on the map to explore its
-                    document structure, semantic topic, original
-                    text, and nearest semantic passages.
+                <p class="hero-subtitle">
+                    Exploring the relationship between what a university
+                    bulletin says and how its information is organized.
                 </p>
 
-            </div>
+                <p class="hero-description">
+                    This project transforms the Duke Kunshan University
+                    Undergraduate Instruction Bulletin into an interactive
+                    text corpus. Each point represents a paragraph or short
+                    policy passage. Semantic embeddings reveal passages with
+                    similar content, while a topic-by-section matrix shows
+                    where those themes occur in the document's formal structure.
+                </p>
 
-        </section>
+                <div class="hero-actions">
+                    <a class="lab8-primary-link" href="#semantic-section">
+                        Explore the semantic map <span aria-hidden="true">↗</span>
+                    </a>
 
-
-        <section id="matrix-section">
-
-            <h2>3. Topic × Bulletin Section Matrix</h2>
-
-            <p>
-                This matrix shows how semantic topics are distributed
-                across the bulletin's formal sections. Each cell represents
-                the number of passages belonging to a semantic topic within
-                a formal section.
-            </p>
-
-            <div class="visualization-note">
-
-                <strong>Rows:</strong>
-                Formal bulletin sections
-                <br>
-
-                <strong>Columns:</strong>
-                Semantic topics
-                <br>
-
-                <strong>Cell intensity:</strong>
-                Number of passages
-                <br>
-
-                <strong>Interaction:</strong>
-                Click a cell to highlight its corresponding passages
-                in the semantic map.
-
-            </div>
-
-
-            <div id="topic-section-matrix"></div>
-
-        </section>
-
-
-        <section id="findings">
-
-            <h2>4. Semantic Findings</h2>
-
-            <div id="findings-content">
-
-                <div class="visualization-note">
-                    Findings will be generated from the actual corpus,
-                    topic assignments, matrix distribution, and semantic
-                    neighbor relationships.
+                    <a class="lab8-secondary-link" href="#matrix-section">
+                        View topic distribution
+                    </a>
                 </div>
-
             </div>
 
-        </section>
+            <aside class="source-card" aria-label="Corpus information">
+                <p class="source-card-label">SOURCE DOCUMENT</p>
 
+                <h2>DKU Undergraduate Instruction Bulletin</h2>
+                <p class="source-version">Academic year 2021–2022</p>
 
-        <section id="design-description">
-
-            <h2>5. Design Description and Findings</h2>
-
-            <div class="visualization-note">
+                <div class="source-divider"></div>
 
                 <p>
-                    The bulletin was divided into meaningful paragraphs
-                    and short policy blocks, preserving chapter, section,
-                    subsection, page, and passage information. Each passage
-                    was cleaned before semantic analysis. The
-                    <strong>all-MiniLM-L6-v2</strong> model was used to
-                    transform passages into high-dimensional semantic
-                    embeddings. UMAP reduced these embeddings to two
-                    dimensions using 15 neighbors, a minimum distance of
-                    0.15, and cosine distance. K-Means was then applied to
-                    the original embeddings to identify eight semantic
-                    clusters. Representative passages and TF-IDF terms
-                    were used to interpret the resulting clusters.
+                    <span class="metadata-label">Unit of analysis</span>
+                    Paragraph or short policy block
                 </p>
 
                 <p>
-                    In the semantic map, position represents the UMAP
-                    projection, color represents semantic topic, and point
-                    size represents passage length. Clicking a passage
-                    displays its formal document location, semantic topic,
-                    original text, and five nearest semantic passages.
-                    Search and section/topic filters allow users to focus
-                    on particular content, while zoom and pan support
-                    exploration of dense regions. The Topic × Section
-                    matrix complements the map by showing how semantic
-                    topics are distributed across the bulletin's formal
-                    structure. Selecting a matrix cell highlights the
-                    corresponding passages in the semantic map.
+                    <span class="metadata-label">Document hierarchy</span>
+                    Chapter → Section → Subsection → Passage
                 </p>
 
+                <a
+                    href="https://dku-web-admissions.s3.cn-north-1.amazonaws.com.cn/dkumain/files/V2021-22_DKU_UG_Bulletin.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="source-link">
+                    Open original bulletin ↗
+                </a>
+            </aside>
+        </header>
+
+        <section id="corpus-overview" class="lab8-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">01 / THE CORPUS</p>
+                    <h2>Start with the document</h2>
+                    <p class="section-intro">
+                        A snapshot of the bulletin before exploring its
+                        semantic structure.
+                    </p>
+                </div>
             </div>
 
+            <div id="corpus-statistics" class="stats-grid">
+                <article class="stat-card">
+                    <span class="stat-label">Raw passages</span>
+                    <strong id="raw-count">—</strong>
+                    <span class="stat-footnote">Extracted text units</span>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Clean passages</span>
+                    <strong id="clean-count">—</strong>
+                    <span class="stat-footnote">Units retained for analysis</span>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Average passage length</span>
+                    <strong id="average-length">—</strong>
+                    <span class="stat-footnote">Words per passage</span>
+                </article>
+
+                <article class="stat-card">
+                    <span class="stat-label">Formal sections</span>
+                    <strong id="section-count">—</strong>
+                    <span class="stat-footnote">Distinct bulletin sections</span>
+                </article>
+            </div>
+
+            <div class="overview-grid">
+                <article class="lab8-panel section-summary-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <p class="eyebrow">DOCUMENT STRUCTURE</p>
+                            <h3>Passages by formal section</h3>
+                        </div>
+                    </div>
+
+                    <p class="panel-description">
+                        Compare how much text each formal section contributes
+                        to the corpus. Larger sections may naturally dominate
+                        passage counts.
+                    </p>
+
+                    <div id="section-summary"></div>
+                </article>
+
+                <article class="lab8-panel methods-panel">
+                    <p class="eyebrow">ANALYTICAL PIPELINE</p>
+                    <h3>From text to semantic space</h3>
+
+                    <ol class="pipeline-list">
+                        <li>
+                            <span class="pipeline-number">01</span>
+                            <div>
+                                <strong>Structure and clean</strong>
+                                <p>Preserve passage text and document hierarchy.</p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span class="pipeline-number">02</span>
+                            <div>
+                                <strong>Embed passages</strong>
+                                <p>Represent text using all-MiniLM-L6-v2.</p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span class="pipeline-number">03</span>
+                            <div>
+                                <strong>Project and cluster</strong>
+                                <p>Use UMAP for 2D positioning and K-Means for topics.</p>
+                            </div>
+                        </li>
+
+                        <li>
+                            <span class="pipeline-number">04</span>
+                            <div>
+                                <strong>Compare two structures</strong>
+                                <p>Connect semantic neighborhoods to formal sections.</p>
+                            </div>
+                        </li>
+                    </ol>
+
+                    <details class="method-details">
+                        <summary>View model settings</summary>
+
+                        <dl class="method-settings">
+                            <dt>Embedding model</dt>
+                            <dd>all-MiniLM-L6-v2</dd>
+
+                            <dt>Projection</dt>
+                            <dd>UMAP · 2 dimensions</dd>
+
+                            <dt>Neighbors</dt>
+                            <dd>15</dd>
+
+                            <dt>Minimum distance</dt>
+                            <dd>0.15</dd>
+
+                            <dt>Distance metric</dt>
+                            <dd>Cosine</dd>
+
+                            <dt>Clustering</dt>
+                            <dd>K-Means · 8 clusters</dd>
+
+                            <dt>Topic interpretation</dt>
+                            <dd>TF-IDF terms and representative passages</dd>
+                        </dl>
+                    </details>
+                </article>
+            </div>
         </section>
+
+        <section id="semantic-section" class="lab8-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">02 / SEMANTIC EXPLORATION</p>
+                    <h2>Find passages that think alike</h2>
+                    <p class="section-intro">
+                        Explore the passages by semantic similarity, then
+                        inspect where each passage appears in the bulletin.
+                    </p>
+                </div>
+
+                <div class="map-reading-note">
+                    <span class="reading-note-dot"></span>
+                    <span>Each dot represents one passage</span>
+                </div>
+            </div>
+
+            <div class="lab8-panel exploration-panel">
+                <div id="map-controls" class="map-controls">
+                    <div class="control-group search-control">
+                        <label for="search">Search passage text</label>
+                        <input
+                            type="search"
+                            id="search"
+                            placeholder="Try credit, graduation, or China…"
+                            autocomplete="off">
+                    </div>
+
+                    <div class="control-group">
+                        <label for="section-filter">Formal section</label>
+                        <select id="section-filter">
+                            <option value="all">All sections</option>
+                        </select>
+                    </div>
+
+                    <div class="control-group">
+                        <label for="topic-filter">Semantic topic</label>
+                        <select id="topic-filter">
+                            <option value="all">All topics</option>
+                        </select>
+                    </div>
+
+                    <button
+                        id="reset-filters"
+                        class="lab8-reset-button"
+                        type="button">
+                        Reset view
+                    </button>
+                </div>
+
+                <div class="map-workspace">
+                    <div class="map-main-column">
+                        <div class="map-title-row">
+                            <div>
+                                <h3>Semantic embedding map</h3>
+                                <p>
+                                    Nearby points tend to have more similar
+                                    semantic content in the original embedding space.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div id="semantic-map" class="semantic-map-container"></div>
+
+                        <div class="map-encoding-key">
+                            <div>
+                                <span class="encoding-symbol encoding-dot"></span>
+                                <span><strong>Position</strong> · semantic similarity</span>
+                            </div>
+
+                            <div>
+                                <span class="encoding-symbol encoding-topic"></span>
+                                <span><strong>Color</strong> · assigned topic</span>
+                            </div>
+
+                            <div>
+                                <span class="encoding-symbol encoding-size"></span>
+                                <span><strong>Size</strong> · passage length</span>
+                            </div>
+                        </div>
+
+                        <p class="map-caveat">
+                            UMAP axes have no direct standalone meaning.
+                            Relationships in the 2D projection approximate
+                            relationships in the high-dimensional embedding space.
+                        </p>
+                    </div>
+
+                    <aside class="map-sidebar">
+                        <div id="semantic-legend" class="legend-panel">
+                            <p class="eyebrow">LEGEND</p>
+                            <h3>Semantic topics</h3>
+                            <p class="panel-description">
+                                Use the topic legend to understand the
+                                colors assigned to passages.
+                            </p>
+
+                            <div id="topic-legend"></div>
+                        </div>
+
+                        <div id="detail-panel" class="detail-panel">
+                            <p class="eyebrow">PASSAGE INSPECTOR</p>
+                            <h3>Explore a passage</h3>
+                            <p>
+                                Select a point on the map to see its original
+                                text, document location, assigned topic, and
+                                nearest semantic neighbors.
+                            </p>
+
+                            <div class="detail-empty-state">
+                                <span aria-hidden="true">↖</span>
+                                <p>Your selected passage and related passages
+                                   will appear here.</p>
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </div>
+        </section>
+
+        <section id="matrix-section" class="lab8-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">03 / FORMAL × SEMANTIC STRUCTURE</p>
+                    <h2>Where do the topics appear?</h2>
+                    <p class="section-intro">
+                        Connect machine-discovered semantic topics to the
+                        bulletin's formal organization.
+                    </p>
+                </div>
+            </div>
+
+            <div class="lab8-panel matrix-panel">
+                <div class="matrix-explanation">
+                    <div>
+                        <h3>Topic × bulletin section</h3>
+                        <p>
+                            Each cell represents the number of passages assigned
+                            to a topic within a formal section. Select a cell to
+                            highlight matching passages on the semantic map.
+                        </p>
+                    </div>
+
+                    <div class="matrix-key">
+                        <span class="matrix-key-label">Cell intensity</span>
+                        <span class="matrix-swatch matrix-low"></span>
+                        <span class="matrix-swatch matrix-mid"></span>
+                        <span class="matrix-swatch matrix-high"></span>
+                        <span class="matrix-key-label">Fewer → more passages</span>
+                    </div>
+                </div>
+
+                <p class="matrix-scroll-hint">
+                    Scroll horizontally to inspect all topic columns.
+                </p>
+
+                <div id="topic-section-matrix" class="matrix-container"></div>
+
+                <p class="matrix-footnote">
+                    Counts describe the passages in this corpus, not the
+                    importance of a topic or the quality of a program.
+                    Section size can affect raw counts.
+                </p>
+            </div>
+        </section>
+
+        <section id="findings" class="lab8-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">04 / READING THE EVIDENCE</p>
+                    <h2>Questions to investigate</h2>
+                    <p class="section-intro">
+                        Use the map, matrix, and original passages together.
+                        These are analytical questions, not conclusions
+                        already established by the visualization.
+                    </p>
+                </div>
+            </div>
+
+            <div id="findings-content" class="findings-grid">
+                <article class="finding-card">
+                    <span class="finding-number">01</span>
+                    <h3>Which themes dominate the corpus?</h3>
+                    <p>
+                        Compare the topic clusters and representative passages.
+                        Do the largest clusters describe courses, academic rules,
+                        or broader subject areas?
+                    </p>
+                    <a href="#semantic-section">Explore the map ↗</a>
+                </article>
+
+                <article class="finding-card">
+                    <span class="finding-number">02</span>
+                    <h3>Which topics cross formal boundaries?</h3>
+                    <p>
+                        Look for topics represented across several rows of the
+                        matrix. Inspect passages to determine whether they share
+                        a concept or only broad wording.
+                    </p>
+                    <a href="#matrix-section">Explore the matrix ↗</a>
+                </article>
+
+                <article class="finding-card">
+                    <span class="finding-number">03</span>
+                    <h3>Which sections are semantically diverse?</h3>
+                    <p>
+                        Find sections whose passages appear across multiple
+                        topic clusters. Consider the effect of section size.
+                    </p>
+                    <a href="#semantic-section">Compare passages ↗</a>
+                </article>
+
+                <article class="finding-card">
+                    <span class="finding-number">04</span>
+                    <h3>Which passages connect distant sections?</h3>
+                    <p>
+                        Select a passage and inspect its nearest neighbors.
+                        Check whether related passages occur in different
+                        sections and what they have in common.
+                    </p>
+                    <a href="#semantic-section">Find related passages ↗</a>
+                </article>
+
+                <article class="finding-card">
+                    <span class="finding-number">05</span>
+                    <h3>Where does “credit” appear?</h3>
+                    <p>
+                        Search for “credit,” then compare the topic colors
+                        and formal sections of matching passages.
+                    </p>
+                    <a href="#semantic-section">Search the bulletin ↗</a>
+                </article>
+
+                <article class="finding-card">
+                    <span class="finding-number">06</span>
+                    <h3>Which passages seem unusual for their section?</h3>
+                    <p>
+                        Inspect passages located near topics different from
+                        those common in their formal section. Verify apparent
+                        outliers by reading the source text.
+                    </p>
+                    <a href="#semantic-section">Inspect the map ↗</a>
+                </article>
+            </div>
+        </section>
+
+        <section id="design-description" class="lab8-section">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">05 / METHODS &amp; LIMITATIONS</p>
+                    <h2>How to interpret this visualization</h2>
+                    <p class="section-intro">
+                        The methods explain how the map was constructed;
+                        the limitations explain what it can and cannot tell us.
+                    </p>
+                </div>
+            </div>
+
+            <div class="design-description-grid">
+                <article class="lab8-panel design-prose">
+                    <h3>Design description</h3>
+
+                    <p>
+                        The Duke Kunshan University Undergraduate Instruction
+                        Bulletin (2021–2022) was divided into paragraphs and
+                        short policy blocks. Chapter, section, subsection,
+                        page, and passage metadata preserve each unit's formal
+                        location. After text cleaning, all-MiniLM-L6-v2
+                        generated high-dimensional semantic embeddings. UMAP
+                        projected the embeddings into two dimensions using
+                        15 neighbors, a minimum distance of 0.15, cosine
+                        distance, and a fixed random seed of 401. K-Means
+                        clustered the original embeddings into eight groups.
+                        TF-IDF terms and representative passages informed
+                        the topic labels.
+                    </p>
+
+                    <p>
+                        The map uses position to represent the UMAP projection,
+                        color to identify semantic topics, and point size to
+                        encode passage length. Search and section/topic filters
+                        support focused exploration; clicking a passage reveals
+                        its source text and nearest semantic neighbors. The
+                        Topic × Section matrix summarizes how topics are
+                        distributed across formal sections, and selecting a
+                        cell connects the matrix to matching points in the map.
+                        Together, these views let readers compare semantic
+                        similarity with document organization.
+                    </p>
+
+                    <p>
+                        The projection is approximate: nearby points can suggest
+                        semantic similarity, but the axes are not directly
+                        interpretable. Cluster labels are interpretations of
+                        model-generated groups, not official bulletin categories.
+                        Raw counts can favor longer sections. The visualization
+                        therefore supports investigation rather than proving
+                        that a topic is important or that two passages are
+                        equivalent.
+                    </p>
+                </article>
+
+                <aside class="lab8-panel interpretation-panel">
+                    <p class="eyebrow">READ WITH CARE</p>
+                    <h3>Three interpretation rules</h3>
+
+                    <div class="interpretation-rule">
+                        <span class="rule-mark">01</span>
+                        <div>
+                            <strong>Similarity is not identity</strong>
+                            <p>
+                                Related passages may differ in meaning,
+                                conditions, or policy consequences.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="interpretation-rule">
+                        <span class="rule-mark">02</span>
+                        <div>
+                            <strong>Clusters are model-derived</strong>
+                            <p>
+                                Topic names summarize groups; they are not
+                                official university classifications.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="interpretation-rule">
+                        <span class="rule-mark">03</span>
+                        <div>
+                            <strong>Counts depend on document structure</strong>
+                            <p>
+                                A section with more passages may dominate raw
+                                counts without being more important.
+                            </p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </section>
+
+        <footer class="lab8-footer">
+            <p>STATS 401 · Data Acquisition and Visualization</p>
+            <a href="#dataset-description">Back to top ↑</a>
+        </footer>
 
     </main>
 
-
-    <div id="tooltip"
-         class="tooltip">
-    </div>
-
+    <div id="tooltip" class="tooltip" role="status" aria-live="polite"></div>
 
     <script src="https://d3js.org/d3.v7.min.js"></script>
-
     <script src="../js/main.js"></script>
-
     <script src="lab8.js"></script>
 
 </body>
-
 </html>

@@ -596,6 +596,9 @@ function drawSectionSummary() {
         );
 }
 
+function updatePointVisibility() {
+    applyFilters();
+}
 
 function applyFilters() {
     const section =
@@ -1078,321 +1081,281 @@ function updateDetails() {
 
 
 function drawMatrix() {
-    const container = d3.select(
-        "#topic-section-matrix"
+    const container = d3.select("#topic-section-matrix");
+    container.html("");
+
+    const sections = [...new Set(
+        allData.map(d => d.section)
+    )].sort();
+
+    const topics = colorScale.domain().slice().sort();
+
+    const matrixLookup = new Map(
+        matrixData.map(d => [
+            `${d.section}|||${d.cluster_name}`,
+            d
+        ])
     );
-
-    const sections = [
-        ...new Set(
-            allData.map(
-                d => d.section
-            )
-        )
-    ].sort();
-
-    const topics = colorScale
-        .domain()
-        .slice()
-        .sort();
 
     const values = [];
 
-    sections.forEach(
-        section => {
-
-            topics.forEach(
-                topic => {
-
-                    const match =
-                        matrixData.find(
-                            d =>
-                                d.section ===
-                                section &&
-                                d.cluster_name ===
-                                topic
-                        );
-
-                    values.push({
-                        section,
-                        cluster_name: topic,
-                        count: match
-                            ? match.count
-                            : 0,
-                        proportion: match
-                            ? match.proportion
-                            : 0
-                    });
-                }
+    sections.forEach(section => {
+        topics.forEach(topic => {
+            const match = matrixLookup.get(
+                `${section}|||${topic}`
             );
-        }
-    );
 
-    const matrixMargin = {
-        top: 150,
-        right: 30,
-        bottom: 30,
-        left: 220
-    };
+            values.push({
+                section,
+                cluster_name: topic,
+                count: match ? match.count : 0,
+                proportion: match ? match.proportion : 0,
+                section_total: match ? match.section_total : 0
+            });
+        });
+    });
 
-    const cellWidth = 105;
-    const cellHeight = 34;
+    const labelWidth = 270;
+    const columnWidth = 142;
+    const rowHeight = 39;
+    const headerHeight = 155;
+    const rightPadding = 28;
+    const bottomPadding = 24;
 
     const matrixWidth =
-        matrixMargin.left +
-        topics.length *
-        cellWidth +
-        matrixMargin.right;
+        labelWidth + topics.length * columnWidth + rightPadding;
 
     const matrixHeight =
-        matrixMargin.top +
-        sections.length *
-        cellHeight +
-        matrixMargin.bottom;
+        headerHeight + sections.length * rowHeight + bottomPadding;
 
-    const maxCount = d3.max(
-        values,
-        d => d.count
-    );
+    const maxCount = d3.max(values, d => d.count) || 1;
 
-    const cellColor = d3.scaleSequential(
-        d3.interpolateBlues
-    )
-    .domain([
-        0,
-        maxCount || 1
-    ]);
+    const cellColor = d3.scaleSequential(d3.interpolateBlues)
+        .domain([0, Math.sqrt(maxCount)]);
 
-    const matrixSvg = container
-        .append("svg")
+    const colorForCount = count =>
+        count === 0
+            ? "#f1f4f8"
+            : cellColor(Math.sqrt(count));
+
+    const matrixSvg = container.append("svg")
+        .attr("class", "matrix-svg")
+        .attr("width", matrixWidth)
+        .attr("height", matrixHeight)
+        .attr("viewBox", `0 0 ${matrixWidth} ${matrixHeight}`)
+        .attr("role", "img")
         .attr(
-            "viewBox",
-            `0 0 ${matrixWidth} ${matrixHeight}`
-        )
-        .attr(
-            "preserveAspectRatio",
-            "xMinYMin meet"
+            "aria-label",
+            "Heatmap showing passage counts by formal section and semantic topic"
         );
 
-    const matrixGroup = matrixSvg
-        .append("g")
-        .attr(
-            "transform",
-            `translate(
-                ${matrixMargin.left},
-                ${matrixMargin.top}
-            )`
-        );
+    matrixSvg.append("text")
+        .attr("class", "matrix-title")
+        .attr("x", 22)
+        .attr("y", 29)
+        .text("Passages across sections and semantic topics");
 
-    matrixSvg
-        .append("text")
-        .attr(
-            "class",
-            "matrix-title"
-        )
-        .attr(
-            "x",
-            matrixMargin.left
-        )
-        .attr(
-            "y",
-            30
-        )
-        .text(
-            "Passage Count by Formal Section and Semantic Topic"
-        );
+    matrixSvg.append("text")
+        .attr("class", "matrix-subtitle")
+        .attr("x", 22)
+        .attr("y", 52)
+        .text("Select a cell to explore its passages on the semantic map.");
 
-    matrixSvg
-        .append("text")
-        .attr(
-            "class",
-            "matrix-note"
-        )
-        .attr(
-            "x",
-            matrixMargin.left
-        )
-        .attr(
-            "y",
-            52
-        )
-        .text(
-            "Click a cell to highlight its passages in the semantic map"
-        );
+    const legend = matrixSvg.append("g")
+        .attr("class", "matrix-legend")
+        .attr("transform", "translate(22,76)");
 
-    matrixGroup
-        .selectAll(
-            ".matrix-cell"
-        )
-        .data(
-            values
-        )
-        .join("rect")
-        .attr(
-            "class",
-            "matrix-cell"
-        )
-        .attr(
-            "x",
-            d =>
-                topics.indexOf(
-                    d.cluster_name
-                ) * cellWidth
-        )
-        .attr(
-            "y",
-            d =>
-                sections.indexOf(
-                    d.section
-                ) * cellHeight
-        )
-        .attr(
-            "width",
-            cellWidth - 2
-        )
-        .attr(
-            "height",
-            cellHeight - 2
-        )
-        .attr(
-            "fill",
-            d =>
-                d.count === 0
-                    ? "#f5f5f5"
-                    : cellColor(
-                        d.count
-                    )
-        )
-        .attr(
-            "stroke",
-            "#ffffff"
-        )
-        .style(
-            "cursor",
-            "pointer"
-        )
-        .on(
-            "mouseenter",
-            showMatrixTooltip
-        )
-        .on(
-            "mousemove",
-            moveTooltip
-        )
-        .on(
-            "mouseleave",
-            hideTooltip
-        )
-        .on(
-            "click",
-            handleMatrixClick
-        );
+    const gradientId = "lab8-matrix-gradient";
 
-    matrixGroup
-        .selectAll(
-            ".matrix-value"
-        )
-        .data(
-            values
-        )
+    const gradient = matrixSvg.append("defs")
+        .append("linearGradient")
+        .attr("id", gradientId)
+        .attr("x1", "0%")
+        .attr("x2", "100%")
+        .attr("y1", "0%")
+        .attr("y2", "0%");
+
+    [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+        gradient.append("stop")
+            .attr("offset", `${t * 100}%`)
+            .attr(
+                "stop-color",
+                cellColor(Math.sqrt(maxCount) * t)
+            );
+    });
+
+    legend.append("text")
+        .attr("class", "matrix-legend-label")
+        .attr("x", 0)
+        .attr("y", 12)
+        .text("Passage count");
+
+    legend.append("rect")
+        .attr("x", 105)
+        .attr("y", 0)
+        .attr("width", 150)
+        .attr("height", 12)
+        .attr("rx", 3)
+        .attr("fill", `url(#${gradientId})`);
+
+    legend.append("text")
+        .attr("class", "matrix-legend-tick")
+        .attr("x", 105)
+        .attr("y", 27)
+        .text("Fewer");
+
+    legend.append("text")
+        .attr("class", "matrix-legend-tick")
+        .attr("x", 255)
+        .attr("y", 27)
+        .attr("text-anchor", "end")
+        .text("More");
+
+    matrixSvg.append("text")
+        .attr("class", "matrix-axis-heading")
+        .attr("x", 22)
+        .attr("y", headerHeight - 13)
+        .text("FORMAL BULLETIN SECTION");
+
+    matrixSvg.append("text")
+        .attr("class", "matrix-axis-heading")
+        .attr("x", labelWidth)
+        .attr("y", headerHeight - 77)
+        .text("SEMANTIC TOPIC");
+
+    const wrapTopic = (text, maxChars = 19) => {
+        const words = text.split(/\s+/);
+        const lines = [];
+        let line = "";
+
+        words.forEach(word => {
+            const next = line ? `${line} ${word}` : word;
+
+            if (next.length > maxChars && line) {
+                lines.push(line);
+                line = word;
+            } else {
+                line = next;
+            }
+        });
+
+        if (line) lines.push(line);
+
+        return lines;
+    };
+
+    const topicLabels = matrixSvg.append("g")
+        .attr("class", "matrix-column-labels");
+
+    topics.forEach((topic, i) => {
+        const x =
+            labelWidth + i * columnWidth + columnWidth / 2;
+
+        const lines = wrapTopic(topic);
+
+        const label = topicLabels.append("text")
+            .attr("class", "matrix-column-label")
+            .attr("x", x)
+            .attr("y", headerHeight - 65)
+            .attr("text-anchor", "middle");
+
+        label.append("title").text(topic);
+
+        lines.forEach((line, lineIndex) => {
+            label.append("tspan")
+                .attr("x", x)
+                .attr("dy", lineIndex === 0 ? 0 : 14)
+                .text(line);
+        });
+    });
+
+    const rowLabels = matrixSvg.append("g")
+        .attr("class", "matrix-row-labels");
+
+    rowLabels.selectAll("text")
+        .data(sections)
         .join("text")
-        .attr(
-            "class",
-            "matrix-value"
-        )
-        .attr(
-            "x",
-            d =>
-                topics.indexOf(
-                    d.cluster_name
-                ) * cellWidth +
-                cellWidth / 2
-        )
-        .attr(
-            "y",
-            d =>
-                sections.indexOf(
-                    d.section
-                ) * cellHeight +
-                cellHeight / 2 +
-                4
-        )
-        .attr(
-            "text-anchor",
-            "middle"
-        )
-        .text(
-            d => d.count
-        )
-        .style(
-            "pointer-events",
-            "none"
-        );
-
-    matrixGroup
-        .selectAll(
-            ".matrix-row-label"
-        )
-        .data(
-            sections
-        )
-        .join("text")
-        .attr(
-            "class",
-            "matrix-row-label"
-        )
-        .attr(
-            "x",
-            -10
-        )
+        .attr("class", "matrix-row-label")
+        .attr("x", labelWidth - 16)
         .attr(
             "y",
             (_, i) =>
-                i * cellHeight +
-                cellHeight / 2 +
-                4
+                headerHeight + i * rowHeight + rowHeight / 2 + 4
         )
-        .attr(
-            "text-anchor",
-            "end"
-        )
-        .text(
-            d => d
-        );
+        .attr("text-anchor", "end")
+        .text(d => d)
+        .append("title")
+        .text(d => d);
 
-    matrixGroup
-        .selectAll(
-            ".matrix-column-label"
-        )
-        .data(
-            topics
-        )
-        .join("text")
-        .attr(
-            "class",
-            "matrix-column-label"
-        )
+    const matrixGroup = matrixSvg.append("g")
         .attr(
             "transform",
-            (d, i) => `
-                translate(
-                    ${
-                        i * cellWidth +
-                        cellWidth / 2
-                    },
-                    -12
-                )
-                rotate(-45)
-            `
-        )
-        .attr(
-            "text-anchor",
-            "start"
-        )
-        .text(
-            d => d
+            `translate(${labelWidth},${headerHeight})`
         );
-}
 
+    matrixGroup.selectAll(".matrix-cell")
+        .data(values)
+        .join("rect")
+        .attr("class", "matrix-cell")
+        .attr("x", d =>
+            topics.indexOf(d.cluster_name) * columnWidth + 4
+        )
+        .attr("y", d =>
+            sections.indexOf(d.section) * rowHeight + 4
+        )
+        .attr("width", columnWidth - 8)
+        .attr("height", rowHeight - 8)
+        .attr("rx", 5)
+        .attr("fill", d => colorForCount(d.count))
+        .attr("stroke", "#ffffff")
+        .attr("stroke-width", 1)
+        .style("cursor", "pointer")
+        .on("mouseenter", showMatrixTooltip)
+        .on("mousemove", moveTooltip)
+        .on("mouseleave", hideTooltip)
+        .on("click", handleMatrixClick)
+        .append("title")
+        .text(d =>
+            `${d.section} · ${d.cluster_name}: ${d.count} passages`
+        );
+
+    matrixGroup.selectAll(".matrix-value")
+        .data(values)
+        .join("text")
+        .attr("class", "matrix-value")
+        .attr("x", d =>
+            topics.indexOf(d.cluster_name) * columnWidth +
+            columnWidth / 2
+        )
+        .attr("y", d =>
+            sections.indexOf(d.section) * rowHeight +
+            rowHeight / 2 + 4
+        )
+        .attr("text-anchor", "middle")
+        .attr("fill", d =>
+            d.count > maxCount * 0.48
+                ? "#ffffff"
+                : "#23344d"
+        )
+        .text(d =>
+            d.count === 0 ? "–" : d3.format(",")(d.count)
+        )
+        .style("pointer-events", "none");
+
+    matrixGroup.selectAll(".matrix-row-guide")
+        .data(sections)
+        .join("line")
+        .attr("class", "matrix-row-guide")
+        .attr("x1", 0)
+        .attr("x2", topics.length * columnWidth)
+        .attr("y1", (_, i) => (i + 1) * rowHeight)
+        .attr("y2", (_, i) => (i + 1) * rowHeight)
+        .attr("stroke", "#e8edf3")
+        .attr("stroke-width", 0.6)
+        .lower();
+
+    updateMatrixStyles();
+}
 
 function handleMatrixClick(event, d) {
     event.stopPropagation();
@@ -1503,34 +1466,18 @@ function showTooltip(event, d) {
 
 function showMatrixTooltip(event, d) {
     tooltip
-        .style(
-            "opacity",
-            1
-        )
-        .html(
-            `
-            <strong>
-                ${escapeHTML(
-                    d.section
-                )}
-            </strong>
-            <br>
-            Topic:
-            ${escapeHTML(
-                d.cluster_name
-            )}
-            <br>
-            Passages:
-            ${d.count}
-            <br>
-            Proportion:
-            ${(d.proportion * 100).toFixed(1)}%
-            `
-        );
+        .style("opacity", 1)
+        .html(`
+            <strong>${escapeHTML(d.section)}</strong>
+            <div class="matrix-tooltip-topic">
+                ${escapeHTML(d.cluster_name)}
+            </div>
+            <div>Passages: ${d3.format(",")(d.count)}</div>
+            <div>Share of section: ${(d.proportion * 100).toFixed(1)}%</div>
+        `);
 
     moveTooltip(event);
 }
-
 
 function moveTooltip(event) {
     tooltip
