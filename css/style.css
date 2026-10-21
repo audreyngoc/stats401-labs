@@ -2328,6 +2328,84 @@ p {
 }
 
 
+.lab8-page #topic-section-matrix {
+    width: 100%;
+    max-width: 100%;
+    max-height: 820px;
+    overflow: auto;
+    background: #fff;
+    border: 1px solid #e3e9f1;
+    border-radius: 14px;
+}
+
+.lab8-page #topic-section-matrix .matrix-svg {
+    display: block;
+    width: auto;
+    max-width: none;
+    height: auto;
+    font-family: inherit;
+}
+
+.lab8-page #topic-section-matrix .matrix-title {
+    fill: #172b4d;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.lab8-page #topic-section-matrix .matrix-subtitle {
+    fill: #66758a;
+    font-size: 12px;
+}
+
+.lab8-page #topic-section-matrix .matrix-column-label {
+    fill: #34445c;
+    font-size: 10.5px;
+    font-weight: 600;
+}
+
+.lab8-page #topic-section-matrix .matrix-axis-heading {
+    fill: #718096;
+    font-size: 9.5px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.lab8-page #topic-section-matrix .matrix-legend-label {
+    fill: #35445b;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.lab8-page #topic-section-matrix .matrix-legend-tick {
+    fill: #77849a;
+    font-size: 10px;
+}
+
+.lab8-page #topic-section-matrix .matrix-row-label {
+    fill: #40516a;
+    font-size: 11px;
+}
+
+.lab8-page #topic-section-matrix .matrix-value {
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+}
+
+.lab8-page #topic-section-matrix .matrix-cell {
+    transition: stroke 120ms ease;
+}
+
+.lab8-page #topic-section-matrix .matrix-cell:hover {
+    stroke: #304968;
+    stroke-width: 2px;
+}
+
+.lab8-page #topic-section-matrix .matrix-row-guide {
+    pointer-events: none;
+}
+
+
 /* Lab 9 */
 
 .lab9-header {

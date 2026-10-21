@@ -383,9 +383,14 @@
                     <span class="finding-number">01</span>
                     <h3>Which themes dominate the corpus?</h3>
                     <p>
-                        Compare the topic clusters and representative passages.
-                        Do the largest clusters describe courses, academic rules,
-                        or broader subject areas?
+                        The largest topic is Politics, Culture, and Social Thought,
+                    with 192 passages (17.2%). Academic Policies and Credit
+                    Requirements follows with 175 passages (15.6%), while
+                    Economics, Public Policy, and Global Health contains 153
+                    passages (13.7%). These are the three largest clusters.
+                    However, cluster sizes indicate how the passages were
+                    assigned by the model; they do not directly measure the
+                    importance of a topic to the university.
                     </p>
                     <a href="#semantic-section">Explore the map ↗</a>
                 </article>
@@ -394,9 +399,14 @@
                     <span class="finding-number">02</span>
                     <h3>Which topics cross formal boundaries?</h3>
                     <p>
-                        Look for topics represented across several rows of the
-                        matrix. Inspect passages to determine whether they share
-                        a concept or only broad wording.
+                        Academic Policies and Credit Requirements appears in 35
+                    distinct formal sections, and Academic Support and Career
+                    Development appears in 28. China Studies and Global History
+                    appears in 9, while Politics, Culture, and Social Thought
+                    appears in 6. The distribution is uneven: several topic
+                    clusters are concentrated in Course Descriptions and Majors,
+                    so a topic label should not be interpreted as belonging
+                    exclusively to one formal section.
                     </p>
                     <a href="#matrix-section">Explore the matrix ↗</a>
                 </article>
@@ -405,8 +415,13 @@
                     <span class="finding-number">03</span>
                     <h3>Which sections are semantically diverse?</h3>
                     <p>
-                        Find sections whose passages appear across multiple
-                        topic clusters. Consider the effect of section size.
+                        Course Descriptions has 674 passages and contains all eight
+                    semantic topics. Majors (listed in alphabetical order) has
+                    207 passages and contains seven topics. By topic coverage
+                    and the distribution of topic assignments, these are the
+                    broadest sections in this corpus. Smaller sections should
+                    be interpreted cautiously because a few passages can
+                    substantially change their apparent diversity.
                     </p>
                     <a href="#semantic-section">Compare passages ↗</a>
                 </article>
@@ -415,19 +430,37 @@
                     <span class="finding-number">04</span>
                     <h3>Which passages connect distant sections?</h3>
                     <p>
-                        Select a passage and inspect its nearest neighbors.
-                        Check whether related passages occur in different
-                        sections and what they have in common.
+                        Passage P0091 in Entrance Credit and Placement (page 38)
+                    and P0098 in Transfer of Work Taken Elsewhere (page 40)
+                    have a nearest-neighbor similarity score of 0.9211.
+                    Both discuss the evaluation or transfer of previously
+                    completed college coursework. This is an example of a
+                    shared concept appearing under different formal headings.
+                    </p>
+                    <p>
+                        Another example is P0143 in Grading and Grade Requirements
+                    (page 54) and P0200 in Office of Global Education and Study
+                    Away (page 76), with a similarity score of 0.9370. Their
+                    text discusses how courses taken at Duke on a satisfactory/
+                    unsatisfactory basis transfer back to DKU.
                     </p>
                     <a href="#semantic-section">Find related passages ↗</a>
                 </article>
 
                 <article class="finding-card">
                     <span class="finding-number">05</span>
-                    <h3>Where does “credit” appear?</h3>
+                    <h3>Do key terms occur in one semantic region or across several topics?</h3>
                     <p>
-                        Search for “credit,” then compare the topic colors
-                        and formal sections of matching passages.
+                         Searching the passage text for “credit” returns 252 passages
+                    across all eight topics, although 100 belong to Academic
+                    Policies and Credit Requirements. “Graduation” appears in
+                    28 passages, 27 of which belong to that topic. “Registration”
+                    appears in 8 passages across three topics. The exact phrase
+                    “academic integrity” appears in 2 passages, both assigned
+                    to Academic Policies and Credit Requirements. These results
+                    show that the distribution depends on the concept being
+                    searched and that keyword matches are not the same as
+                    semantic-topic membership.
                     </p>
                     <a href="#semantic-section">Search the bulletin ↗</a>
                 </article>
@@ -436,9 +469,14 @@
                     <span class="finding-number">06</span>
                     <h3>Which passages seem unusual for their section?</h3>
                     <p>
-                        Inspect passages located near topics different from
-                        those common in their formal section. Verify apparent
-                        outliers by reading the source text.
+                         The nearest-neighbor results reveal some passages whose
+                    subject matter overlaps with a different formal section.
+                    For example, P0200 is located in Office of Global Education
+                    and Study Away but is closely related to a grading-policy
+                    passage. This is evidence of cross-section semantic overlap,
+                    not proof that the passage is an outlier. Confirming genuine
+                    outliers would require a separate analysis of each passage's
+                    similarity to its own section and to other sections.
                     </p>
                     <a href="#semantic-section">Inspect the map ↗</a>
                 </article>

@@ -1118,7 +1118,7 @@ function drawMatrix() {
     const labelWidth = 270;
     const columnWidth = 142;
     const rowHeight = 39;
-    const headerHeight = 155;
+    const headerHeight = 220;
     const rightPadding = 28;
     const bottomPadding = 24;
 
@@ -1152,19 +1152,19 @@ function drawMatrix() {
     matrixSvg.append("text")
         .attr("class", "matrix-title")
         .attr("x", 22)
-        .attr("y", 29)
-        .text("Passages across sections and semantic topics");
+        .attr("y", 27)
+        .text("Passages Count by Formal Section and Semantic Topic");
 
     matrixSvg.append("text")
         .attr("class", "matrix-subtitle")
         .attr("x", 22)
-        .attr("y", 52)
+        .attr("y", 51)
         .text("Select a cell to explore its passages on the semantic map.");
 
     const legend = matrixSvg.append("g")
         .attr("class", "matrix-legend")
         .attr("transform", "translate(22,76)");
-
+    
     const gradientId = "lab8-matrix-gradient";
 
     const gradient = matrixSvg.append("defs")
@@ -1173,15 +1173,15 @@ function drawMatrix() {
         .attr("x1", "0%")
         .attr("x2", "100%")
         .attr("y1", "0%")
-        .attr("y2", "0%");
+        .attr("y2", "0%")
+        .attr("color-interpolation", "sRGB");
 
-    [0, 0.25, 0.5, 0.75, 1].forEach(t => {
+    d3.range(21).forEach(i => {
+        const t = i / 20;
+
         gradient.append("stop")
             .attr("offset", `${t * 100}%`)
-            .attr(
-                "stop-color",
-                cellColor(Math.sqrt(maxCount) * t)
-            );
+            .attr("stop-color", d3.interpolateBlues(t));
     });
 
     legend.append("text")
@@ -1220,7 +1220,7 @@ function drawMatrix() {
     matrixSvg.append("text")
         .attr("class", "matrix-axis-heading")
         .attr("x", labelWidth)
-        .attr("y", headerHeight - 77)
+        .attr("y", headerHeight - 105)
         .text("SEMANTIC TOPIC");
 
     const wrapTopic = (text, maxChars = 19) => {
@@ -1256,7 +1256,7 @@ function drawMatrix() {
         const label = topicLabels.append("text")
             .attr("class", "matrix-column-label")
             .attr("x", x)
-            .attr("y", headerHeight - 65)
+            .attr("y", headerHeight - 82)
             .attr("text-anchor", "middle");
 
         label.append("title").text(topic);
@@ -1502,17 +1502,12 @@ function hideTooltip() {
 
 
 function showError(message) {
-    mapContainer
-        .append("div")
-        .attr(
-            "class",
-            "error-message"
-        )
-        .text(
-            message
-        );
-}
+    mapContainer.selectAll(".error-message").remove();
 
+    mapContainer.append("div")
+        .attr("class", "error-message")
+        .text(message);
+}
 
 function escapeHTML(value) {
     return String(value)
